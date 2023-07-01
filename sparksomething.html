@@ -1,0 +1,1992 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" wf-loading>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="shortcut icon" type="image/png" href="/assets/images/favicon.png">
+    <script>
+        window.newrelicAttributes = {
+            accountId: "1796917",
+            trustKey: "1796917",
+            agentId: "149134891",
+            licenseKey: "f701a6c63c",
+            applicationId: "149134891"
+        };
+    </script>
+    <script src="/newrelic.js"></script>
+
+    <!-- Mematuhi Google Optimize -->
+    <script>
+        (() => {
+            const getPrivacyCookie = () => {
+                const privacyCookie = document.cookie.match('(^|;)\\s*cmapi_cookie_privacy\\s*=\\s*([^;]+)');
+
+                return privacyCookie ? privacyCookie.pop() : null;
+            };
+
+            const getBehaviorCookie = () => {
+                const behaviorCookie = document.cookie.match('(^|;)\\s*notice_behavior\\s*=\\s*([^;]+)');
+
+                return behaviorCookie ? behaviorCookie.pop() : null;
+            };
+
+            const hasOptedIn = () => {
+                const behaviorCookie = getBehaviorCookie();
+                const privacyCookie = getPrivacyCookie();
+
+                return behaviorCookie && behaviorCookie.match(/^none$/) || privacyCookie && privacyCookie.match(/2|3/);
+            }
+
+            const appendOptimize = () => {
+                const head = document.getElementsByTagName('head')[0];
+
+                if (head) {
+                    const script = document.createElement('script');
+
+                    script.src = 'https://www.googleoptimize.com/optimize.js?id=GTM-M6BQF2W';
+                    script.id = "google-optimize"
+                    head.append(script);
+                }
+            };
+
+            const removeOptimize = () => {
+                const head = document.getElementsByTagName('head')[0];
+                const optimizeScript = document.getElementById('google-optimize');
+
+                if (head && optimizeScript) {
+                    head.removeChild(optimizeScript);
+                }
+            }
+
+            /**
+              * Tambahkan atau hapus skrip Google Optimize ke kepala,
+              * tergantung pada apakah preferensi cookie pengguna
+              * telah ikut serta dan skrip Google Optimize
+              * ada di kepala.*/
+
+            const handleConsentDecision = () => {
+                const googleOptimizeScript = document.getElementById('google-optimize');
+                if (hasOptedIn() && !googleOptimizeScript) {
+                    appendOptimize();
+                } else if (!hasOptedIn() && googleOptimizeScript) {
+                    removeOptimize();
+                }
+            }
+
+            /**
+              * Callback akan terjadi dalam bentuk event PostMessage. Kode ini mendengarkan untuk
+              * acara PostMessage yang diformat dengan tepat, dapatkan keputusan persetujuan baru, lalu setel
+              * preferensi cookie baru.
+              */
+            const handlePreferencesUpdated = (e) => {
+                try {
+                    const { capabilities, action } = JSON.parse(e.data).PrivacyManagerAPI || {};
+                    if (capabilities && action === 'getConsentDecision') {
+                        handleConsentDecision();
+                    }
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+
+            /**
+              * Mendaftar dengan TrustArc Content Manager (CM) API untuk menerima panggilan balik saat
+              * pembaruan preferensi terjadi, dan larik preferensi dikirim yang diinisialisasi ke
+              * preferensi pengguna saat ini. Anda harus menunggu CM API (objek PrivacyManagerAPI)
+              * untuk ada di halaman sebelum mendaftar.
+              */
+            const CMICallbackRegister = () => {
+                const interval = setInterval(() => {
+                    if (window.PrivacyManagerAPI && interval) {
+                        const apiObject = {
+                            PrivacyManagerAPI: {
+                                action: 'getConsentDecision',
+                                timestamp: new Date().getTime(),
+                                self: window.location.host
+                            }
+                        };
+                        window.top.postMessage(JSON.stringify(apiObject), '*');
+                        clearInterval(interval);
+                    }
+                }, 50);
+            }
+
+            /**
+              * Pendengar mendaftarkan panggilan balik pesan di Manajer Konten TrustArc saat
+              * preferensi cookie pengguna diperbarui dan menambahkan pendengar acara
+              * pada peristiwa pesan yang terjadi saat pembaruan preferensi tersebut terjadi.
+              */
+            const trustArcScriptLoadListener = () => {
+                if (typeof window.truste === 'object') {
+                    CMICallbackRegister();
+                    window.addEventListener('message', handlePreferencesUpdated);
+                }
+            }
+
+            window.addEventListener('load', trustArcScriptLoadListener);
+            const behaviorCookie = getBehaviorCookie();
+
+            if (behaviorCookie === null) {
+                // tunggu skrip TrustArc dimuat sebelum memeriksa cookie
+                let numIntervals = 0;
+                const scriptLoadInterval = setInterval(() => {
+                    if (getBehaviorCookie()) {
+                        handleConsentDecision();
+                        clearInterval(scriptLoadInterval);
+                    }
+                    // Berhenti menjalankan interval setelah 8 kali (8x 500ms yang terdokumentasi).
+                    // harus diambil untuk memuat skrip TrustArc di BE) agar tidak berjalan selamanya
+                    if (++numIntervals >= 10) {
+                        clearInterval(scriptLoadInterval);
+                    }
+                }, 500);
+            } else {
+                handleConsentDecision();
+            }
+        })();
+    </script>
+    <!-- Mengakhiri Kesesuaian Google Optimize -->
+
+    <!-- Google Tag Manager -->
+    <script>
+        (function (w, d, s, l) {
+            w[l] = w[l] || [];
+            w[l].push({
+                'gtm.start': new Date().getTime(),
+                event: 'gtm.js'
+            });
+
+            var f = d.getElementsByTagName(s)[0];
+            var j = d.createElement(s);
+            var dl = l !== 'dataLayer' ? '&l=' + l : '';
+
+            j.async = true;
+            j.src = 'https://www.googletagmanager.com/gtm.js?id=GTM-TG32RCX' + dl;
+            f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer');
+    </script>
+    <!-- Akhiri Google Pengelola Tag -->
+    <style>
+        [unresolved] {
+            visibility: hidden !important;
+        }
+    </style>
+    <noscript>
+        <style>
+            [unresolved] {
+                visibility: visible !important;
+            }
+        </style>
+    </noscript>
+
+    <style>
+        body {
+            margin: 0;
+        }
+
+        .image img {
+            max-width: 100%;
+        }
+    </style>
+    <script>
+        if (!CSS.supports('width', 'calc((var(--test))')) {
+            window.ShadyCSS = {
+                shimcssproperties: true
+            };
+        }
+
+        document.addEventListener('nds.typeKit.active', function () {
+            document.querySelector('html').removeAttribute('wf-loading');
+        });
+    </script>
+    <script src="//unpkg.com/@webcomponents/webcomponentsjs@2.2.7/webcomponents-loader.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/masonry/4.2.2/masonry.pkgd.min.js"></script>
+    <script src="//w.soundcloud.com/player/api.js"></script>
+    <script>
+        window.nds = window.nds || {};
+        window.nds.componentUrlPrefix = '//pl.ea.com/release/4.60.2/elements/ea-elements.min.js'.substring(0, '//pl.ea.com/release/4.60.2/elements/ea-elements.min.js'.lastIndexOf('/') + 1);
+        window.nds.contentfulUrl = 'https://contentful-proxy.juno.ea.com/graphql';
+        window.nds.salUrl = 'https://service-aggregation-layer.juno.ea.com/graphql';
+        window.nds.useApq = true;
+        window.nds.salClientId = 'eacom-fe';
+        window.nds.xGameDistMethod = 'eacom';
+        window.nds.lockboxGameId = 'eacom';
+        window.nds.lockboxInvoiceSource = 'EACOM-STORE-WEB-%countryCode%';
+        window.nds.lockboxExternalPaymentPath = '/lockbox-external-payment';
+    </script>
+    <script type="module" src="//pl.ea.com/release/4.60.2/elements/ea-elements.min.js"></script>
+    <script nomodule defer src="//pl.ea.com/release/4.60.2/elements/ea-elements.min.js"></script>
+
+    <style>
+        @font-face {
+            font-family: 'SimsSans';
+            font-weight: 400;
+            src: url(/assets/fonts/the-sims/the_sims_sans.woff) format('woff');
+        }
+
+        @font-face {
+            font-family: 'SimsSans';
+            font-weight: 700;
+            src: url(/assets/fonts/the-sims/the_sims_sans-bold.woff) format('woff');
+        }
+
+        @font-face {
+            font-family: 'SimsSansSC';
+            font-weight: 400;
+            src: url(/assets/fonts/the-sims/the_sims_sans-sc.woff) format('woff');
+        }
+
+        @font-face {
+            font-family: 'SimsSansSC';
+            font-weight: 700;
+            src: url(/assets/fonts/the-sims/the_sims_sans-bold-sc.woff) format('woff');
+        }
+
+        @font-face {
+            font-family: 'Benton';
+            font-weight: 400;
+            src: url(/assets/fonts/the-sims/Benton_Sans-Book.woff) format('woff');
+        }
+
+        @font-face {
+            font-family: 'Benton';
+            font-weight: 600;
+            src: url(/assets/fonts/the-sims/Benton_Sans-Medium.woff) format('woff');
+        }
+
+        @font-face {
+            font-family: 'Benton';
+            font-weight: 700;
+            src: url(/assets/fonts/the-sims/Benton_Sans-Bold.woff) format('woff');
+        }
+    </style>
+    <style>
+        /* THE SIMS FRANCHISE > GENERAL TYPOGRAPHY () */
+        .ts_textComponent p {
+            margin: 0;
+            max-width: 720px;
+        }
+
+        .ts_textComponent p+p,
+        .ts_textComponent .ts_listComponent+p,
+        .ts_textComponent p+.ts_listComponent {
+            margin-top: 16px;
+        }
+
+        .ts_textComponent h3,
+        .ts_textComponent h4 {
+            margin: 0 0 16px 0;
+            line-height: 1.15;
+        }
+
+        .ts_textComponent a,
+        .ts_tableComponent a {
+            text-decoration: underline;
+        }
+
+        .ts_textComponent[id] {
+            scroll-margin-top: 100px;
+        }
+
+        .ts_textComponent:not(:first-of-type) {
+            margin-top: 72px;
+        }
+
+        .ts_textComponent .ts_textBlock {
+            margin-top: 36px;
+        }
+
+        .ts_textComponent .title {
+            max-width: 640px;
+        }
+
+        .ts_textComponent .subTitle,
+        .ts_tableComponent .subTitle {
+            max-width: 640px;
+            line-height: 1.15;
+            font-weight: bolder;
+            margin: 0 0 8px 0;
+        }
+
+        .ts_scrollToTop {
+            display: inline-block;
+            font-family: var(--ea-theme-header-font-family);
+            font-size: 14px;
+            font-weight: bolder;
+            margin-top: 8px;
+            text-transform: uppercase;
+        }
+
+        /* THE SIMS FRANCHISE > INTERNAL ANCHORS () */
+        .ts_listComponent ul,
+        .ts_listComponent ol {
+            margin: 0;
+            max-width: 720px;
+            padding-left: 1em;
+        }
+
+        .ts_listComponent ol {
+            list-style-type: decimal;
+        }
+
+        .ts_listComponent ul {
+            list-style-type: disc;
+        }
+
+        .ts_listComponent li {
+            margin: 0;
+            padding-left: 0;
+        }
+
+        .ts_listComponent li::before {
+            display: none;
+        }
+
+        .ts_listComponent ul ul,
+        .ts_listComponent ol ol,
+        .ts_listComponent li+li {
+            margin-top: 0.5em;
+        }
+
+        .ts_listComponent a {
+            color: #000000;
+            text-decoration: underline;
+        }
+
+        /* THE SIMS FRANCHISE > TABLE CONTAINER () */
+        .ts_tableComponent {
+            margin-top: 36px;
+        }
+
+        .ts_tableComponent[id] {
+            scroll-margin-top: 100px;
+        }
+
+        .ts_tableComponent p {
+            margin: 0;
+        }
+
+        .ts_tableComponent p+p {
+            margin-top: 0;
+        }
+
+        .ts_tableComponent .row {
+            border-top: 1px solid rgba(0, 0, 0, 0.15);
+            padding-top: 8px;
+            max-width: 720px;
+        }
+
+        .ts_tableComponent .row+.row {
+            margin-top: 8px;
+        }
+
+        .ts_tableComponent .row:last-of-type {
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+        }
+
+        .ts_tableComponent .row .title {
+            align-items: center;
+            display: flex;
+            flex: 1 0;
+            font-weight: 600;
+            justify-content: flex-start;
+        }
+
+        .ts_tableComponent .row .body {
+            flex: 1 0;
+        }
+
+        @media only screen and (min-width: 768px) {
+            .ts_tableComponent .row {
+                display: flex;
+            }
+        }
+
+        /* THE SIMS FRANCHISE > FOOTER DISCLAIMER () */
+        .ts_footerDisclaimerComponent>* {
+            margin: 0;
+        }
+
+        .ts_footerDisclaimerComponent p+p {
+            margin-top: 0.75em;
+        }
+
+        .ts_footerDisclaimerComponent {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 14px;
+            line-height: 1.25;
+        }
+    </style>
+
+    <!-- GENERAL TYPOGRAPHY /  -->
+    <style>
+        [class^="sparkSomething2022_"] a {
+            color: var(--ea-light-color);
+            text-decoration: underline;
+        }
+
+        [class^="sparkSomething2022_"] a:hover {
+            opacity: 0.75;
+            color: inherit;
+            text-decoration: underline;
+        }
+
+        [class^="sparkSomething2022_"] .d1,
+        [class^="sparkSomething2022_"] .d2,
+        [class^="sparkSomething2022_"] .d3,
+        [class^="sparkSomething2022_"] .d4,
+        [class^="sparkSomething2022_"] .d5,
+        [class^="sparkSomething2022_"] .d6,
+        [class^="sparkSomething2022_"] .h1,
+        [class^="sparkSomething2022_"] .h2,
+        [class^="sparkSomething2022_"] .h3,
+        [class^="sparkSomething2022_"] .h4,
+        [class^="sparkSomething2022_"] .h5,
+        [class^="sparkSomething2022_"] .h6,
+        [class^="sparkSomething2022_"] .b1,
+        [class^="sparkSomething2022_"] .b2,
+        [class^="sparkSomething2022_"] .b3,
+        [class^="sparkSomething2022_"] p {
+            margin: 0;
+        }
+
+        [class^="sparkSomething2022_"] p+p {
+            margin-top: 1em;
+        }
+
+        [class^="sparkSomething2022_"] .spacedLetters {
+            letter-spacing: 0.055em;
+        }
+
+        [class^="sparkSomething2022_"] .fontWeightNormal {
+            font-weight: normal;
+        }
+    </style> <!-- TEXT COMPONENT /  -->
+    <style>
+        .sparkSomething2022_textComponent[id] {
+            scroll-margin-top: 100px;
+        }
+
+        .sparkSomething2022_textComponent:not(:first-of-type) {
+            margin-top: 72px;
+        }
+
+        .sparkSomething2022_textComponent p {
+            max-width: 720px;
+        }
+
+        .sparkSomething2022_textComponent .subTitle {
+            max-width: 720px;
+            font-weight: bolder;
+        }
+
+        .sparkSomething2022_textComponent .title+p,
+        .sparkSomething2022_textComponent .subTitle+p,
+        .sparkSomething2022_textComponent .textBlock {
+            margin-top: 16px;
+        }
+    </style> <!-- FOOTER DISCLAIMER COMPONENT /  -->
+    <style>
+        .sparkSomething2022_footerDisclaimerComponent {
+            font-family: var(--ea-theme-ea-corporate-body-font-family, "Verdana", "Helvetica", "Arial", sans-serif);
+            font-size: 14px;
+            line-height: 1.25;
+        }
+
+        .sparkSomething2022_footerDisclaimerComponent p+p {
+            margin-top: 0.5em;
+        }
+    </style> <!-- INTERNAL ANCHOR LINK > DESTINATION LINK > STANDARD /  -->
+    <style>
+        .sparkSomething2022_internalAnchor {
+            font-size: 0;
+            height: 0;
+            margin: 0;
+            padding: 0;
+            scroll-margin-top: 100px;
+            visibility: hidden;
+        }
+    </style> <!-- INTERNAL ANCHOR LINK > DESTINATION LINK > SCROLL TO TOP /  -->
+    <style>
+        a.sparkSomething2022_scrollToTop {
+            display: inline-block;
+            font-family: var(--ea-theme-header-font-family, "Verdana", "Helvetica", "Arial", sans-serif);
+            font-size: 12px;
+            font-weight: bolder;
+            margin-top: 2em;
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+    </style> <!-- INTERNAL ANCHOR LINK > DEPARTURE LINKS CONTAINER /  -->
+    <style>
+        .sparkSomething2022_listComponent {
+            margin: 0;
+            list-style-type: disc;
+            padding-left: 1em;
+        }
+
+        .sparkSomething2022_listComponent li {
+            margin: 0;
+            padding-left: 0;
+        }
+
+        .sparkSomething2022_listComponent li::before {
+            display: none;
+        }
+
+        .sparkSomething2022_listComponent ul,
+        .sparkSomething2022_listComponent li+li {
+            margin-top: 0.5em;
+        }
+
+        .sparkSomething2022_listComponent a {
+            color: #000000;
+            text-decoration: underline;
+        }
+    </style> <!-- KOMMPONEN TABBEL  /  -->
+    <style>
+        .sparkSomething2022_tableComponent {
+            --table-border-color: rgba(0, 0, 0, 0.25);
+            --table-unit: 12px;
+        }
+
+        .sparkSomething2022_tableComponent[id] {
+            scroll-margin-top: 100px;
+        }
+
+        .sparkSomething2022_tableComponent+.sparkSomething2022_tableComponent,
+        .sparkSomething2022_textComponent+.sparkSomething2022_tableComponent {
+            margin-top: 32px;
+        }
+
+        p+.sparkSomething2022_tableComponent {
+            margin-top: 1em;
+        }
+
+        .sparkSomething2022_tableComponent .subTitle {
+            margin-bottom: var(--table-unit);
+        }
+
+        .sparkSomething2022_tableComponent p {
+            margin: 0;
+        }
+
+        .sparkSomething2022_tableComponent p+p {
+            margin-top: 0;
+        }
+
+        .sparkSomething2022_tableComponent .row {
+            border-top: 1px solid var(--table-border-color);
+            padding-top: var(--table-unit);
+            max-width: 720px;
+        }
+
+        .sparkSomething2022_tableComponent .row+.row {
+            margin-top: var(--table-unit);
+        }
+
+        .sparkSomething2022_tableComponent .row:last-of-type {
+            padding-bottom: var(--table-unit);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sparkSomething2022_tableComponent .row .title {
+            align-items: center;
+            display: flex;
+            flex: 1 0;
+            font-weight: bolder;
+            justify-content: flex-start;
+        }
+
+        .sparkSomething2022_tableComponent .row .body {
+            flex: 1 0;
+            margin: 0;
+        }
+
+        @media only screen and (min-width: 768px) {
+            .sparkSomething2022_tableComponent .row {
+                display: flex;
+                max-width: initial;
+            }
+
+            .sparkSomething2022_tableComponent .row .title {
+                margin-right: 1em;
+            }
+        }
+    </style>
+
+
+
+
+    <style>
+        @font-face {
+            font-family: 'ElectronicArtsDisplay';
+            src: url(/assets/fonts/display/ElectronicArtsDisplay-Regular.woff2) format('woff');
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'ElectronicArtsDisplay';
+            src: url(/assets/fonts/display/ElectronicArtsDisplay-Bold.woff2) format('woff');
+            font-weight: 600;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'ElectronicArtsText';
+            src: url(/assets/fonts/text/ElectronicArtsText-Light.woff2) format('woff');
+            font-weight: 300;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'ElectronicArtsText';
+            src: url(/assets/fonts/text/ElectronicArtsText-LightItalic.woff2) format('woff');
+            font-weight: 300;
+            font-style: italic;
+        }
+
+        @font-face {
+            font-family: 'ElectronicArtsText';
+            src: url(/assets/fonts/text/ElectronicArtsText-Regular.woff2) format('woff');
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'ElectronicArtsText';
+            src: url(/assets/fonts/text/ElectronicArtsText-Italic.woff2) format('woff');
+            font-weight: 400;
+            font-style: italic;
+        }
+
+        @font-face {
+            font-family: 'ElectronicArtsText';
+            src: url(/assets/fonts/text/ElectronicArtsText-Bold.woff2) format('woff');
+            font-weight: 600;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'ElectronicArtsText';
+            src: url(/assets/fonts/text/ElectronicArtsText-BoldItalic.woff2) format('woff');
+            font-weight: 600;
+            font-style: italic;
+        }
+    </style>
+    <title>Spark Something</title>
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Spark Something">
+    <meta property="og:description"
+        content="At The Sims, we believe in the power of creativity.  Spark Something is a celebration of creativity and the role our games and brand have played in sparking the creative journey of rule breakers everywhere for over 22 years">
+    <meta property="og:url" content="https://www.ea.com/games/the-sims/spark-something">
+    <meta property="og:site_name" content="Electronic Arts Inc.">
+    <meta property="og:image"
+        content="https://media.contentapi.ea.com/content/dam/eacom/SIMS/220923-franchise-page-rebrand/images/2022/10/the-sims-featured-image-2022-oct.jpg.adapt.crop191x100.1200w.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="628">
+    <meta name="description"
+        content="At The Sims, we believe in the power of creativity.  Spark Something is a celebration of creativity and the role our games and brand have played in sparking the creative journey of rule breakers everywhere for over 22 years">
+    <meta name="author" content="Electronic Arts">
+    <meta property="article:modified_time" content="2023-06-02T21:47:37Z">
+    <meta property="article:published_time" content="2022-11-15T09:00-08:00">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@ea">
+    <meta name="twitter:title" content="Spark Something">
+    <meta name="twitter:description"
+        content="At The Sims, we believe in the power of creativity.  Spark Something is a celebration of creativity and the role our games and brand have played in sparking the creative journey of rule breakers everywhere for over 22 years">
+    <meta name="twitter:image"
+        content="https://media.contentapi.ea.com/content/dam/eacom/SIMS/220923-franchise-page-rebrand/images/2022/10/the-sims-featured-image-2022-oct.jpg.adapt.crop16x9.1023w.jpg">
+    <meta name="twitter:creator" content="@ea">
+    <script type="application/ld+json">
+
+</script>
+    <script>bazadebezolkohpepadr = "264439730"</script>
+    <script type="text/javascript" src="https://www.ea.com/akam/13/fc3067d" defer></script>
+</head>
+
+<body unresolved>
+
+    <custom-style>
+        <style include="ea-shared-styles-base-common"></style>
+    </custom-style>
+    <custom-style>
+        <style include="ea-shared-styles-base-headings"></style>
+    </custom-style>
+    <custom-style>
+        <style include="ea-shared-styles-base-lists"></style>
+    </custom-style>
+    <custom-style>
+        <style include="ea-shared-styles-base-links"></style>
+    </custom-style>
+    <custom-style>
+        <style include="ea-shared-styles-base-images"></style>
+    </custom-style>
+    <custom-style>
+        <style include="ea-shared-styles-typography-headings"></style>
+    </custom-style>
+    <custom-style>
+        <style include="ea-shared-styles-typography-paragraphs"></style>
+    </custom-style>
+    <custom-style>
+        <style include="ea-shared-styles-typography-labels"></style>
+    </custom-style>
+    <custom-style>
+        <style>
+            html {
+
+                --the-sims-jewel-blue: #2B00FF;
+
+                --the-sims-dark-blue: #1500B3;
+
+                --ea-theme-color: var(--the-sims-jewel-blue);
+
+                --ea-dark-color: #000000;
+
+                --ea-light-color: #FFFFFF;
+
+                --ea-theme-dark-gradient: var(--the-sims-dark-blue);
+
+                --ea-theme-light-gradient: var(--the-sims-jewel-blue);
+
+                --ea-theme-header-font-family: "SimsSans", "SimsSansSC", "ElectronicArtsDisplay", "Verdana", "Helvetica", "Arial", sans-serif;
+
+                --sims-sans-font-weight-regular: 400;
+
+                --sims-sans-font-weight-bold: 700;
+
+                --ea-theme-header-font-weight-normal: var(--sims-sans-font-weight-regular);
+
+                --ea-theme-header-font-weight-bold: var(--sims-sans-font-weight-bold);
+
+                --ea-theme-display-line-height: 0.95;
+
+                --ea-theme-d2-font-size-mobile: 24px;
+
+                --ea-theme-d2-font-size-tablet-portrait: 24px;
+
+                --ea-theme-d2-font-size-tablet-landscape: 40px;
+
+                --ea-theme-d2-font-size-desktop: 48px;
+
+                --ea-theme-d3-font-size-mobile: 24px;
+
+                --ea-theme-d3-font-size-tablet-portrait: 24px;
+
+                --ea-theme-d3-font-size-tablet-landscape: 40px;
+
+                --ea-theme-d3-font-size-desktop: 48px;
+
+                --ea-theme-h1-font-weight: var(--ea-theme-header-font-weight-bold);
+
+                --ea-theme-h2-font-weight: var(--ea-theme-header-font-weight-bold);
+
+                --ea-theme-h3-font-weight: var(--ea-theme-header-font-weight-bold);
+
+                --ea-theme-h4-font-weight: var(--ea-theme-header-font-weight-bold);
+
+                --ea-theme-h5-font-weight: var(--ea-theme-header-font-weight-bold);
+
+                --ea-theme-h3-font-size-mobile: 20px;
+
+                --ea-theme-h3-font-size-tablet-landscape: 24px;
+
+                --ea-theme-h3-font-size-desktop: 28px;
+
+                --ea-theme-h4-font-size-mobile: 16px;
+
+                --ea-theme-h4-font-size-tablet-landscape: 20px;
+
+                --ea-theme-h4-font-size-desktop: 24px;
+
+                --ea-theme-body-font-family: "Benton", "ElectronicArtsText", "Verdana", "Helvetica", "Arial", sans-serif;
+
+                --benton-sans-font-weight-book: 400;
+
+                --benton-sans-font-weight-medium: 600;
+
+                --benton-sans-font-weight-bold: 700;
+
+                --ea-theme-body-font-weight-light: var(--benton-sans-font-weight-book);
+
+                --ea-theme-body-font-weight-normal: var(--benton-sans-font-weight-medium);
+
+                --ea-theme-body-font-weight-bold: var(--benton-sans-font-weight-bold);
+
+                --ea-theme-b3-font-size-mobile: 16px;
+
+                --ea-theme-ticker-text-font-size-mobile: 24px;
+
+                --ea-theme-ticker-height-mobile: 32px;
+
+                --ea-theme-ticker-height-desktop: 24px;
+
+                --ea-theme-ticker-gutter-mobile: 16px;
+
+                --ea-theme-ticker-gutter-desktop: 16px;
+
+                --ea-theme-ticker-margins-mobile: 1vw;
+
+                --ea-theme-ticker-margins-desktop: 12px;
+
+                --ea-theme-tile-title-font-family: var(--ea-theme-header-font-family);
+
+                --ea-text-case: none;
+
+                --ts_playOnTheGo-font-size-mobile: clamp(56px, 17.5vw, 112px);
+
+                --ts_playOnTheGo-font-size-desktop: clamp(96px, 12.5vw, 192px);
+
+                --ts_playOnTheGo-line-height: 0.95;
+
+            }
+        </style>
+    </custom-style>
+    <ea-elements-loader elements="ea-network-nav, ea-player, ea-type-kit">
+    </ea-elements-loader>
+    <ea-network-nav unresolved userData="/user-data" content="//nds-network-nav.ea.com//en-us/network-nav"
+        login-url="/login" logout-url="/logout" hide-logo></ea-network-nav>
+    <ea-elements-loader elements="ea-page-background">
+    </ea-elements-loader>
+    <ea-page-background unresolved layout="fixed" background-color="dark">
+        <ea-elements-loader elements="ea-image">
+        </ea-elements-loader>
+        <ea-image unresolved tooltip=""
+            smallest="https://media.contentapi.ea.com/content/dam/eacom/SIMS/common/ts-page-bg-spark-something-xl.jpg.adapt.320w.jpg"
+            small="https://media.contentapi.ea.com/content/dam/eacom/SIMS/common/ts-page-bg-spark-something-xl.jpg.adapt.768w.jpg"
+            medium="https://media.contentapi.ea.com/content/dam/eacom/SIMS/common/ts-page-bg-spark-something-xl.jpg.adapt.1024w.jpg"
+            large="https://media.contentapi.ea.com/content/dam/eacom/SIMS/common/ts-page-bg-spark-something-xl.jpg.adapt.1456w.jpg"
+            largest="https://media.contentapi.ea.com/content/dam/eacom/SIMS/common/ts-page-bg-spark-something-xl.jpg.adapt.1920w.jpg"
+            allow-renditions disable-stretching slot="image">
+            <img src="https://media.contentapi.ea.com/content/dam/eacom/SIMS/common/ts-page-bg-spark-something-xl.jpg.adapt.320w.jpg"
+                alt=""
+                srcset="https://media.contentapi.ea.com/content/dam/eacom/SIMS/common/ts-page-bg-spark-something-xl.jpg.adapt.320w.jpg 320w, https://media.contentapi.ea.com/content/dam/eacom/SIMS/common/ts-page-bg-spark-something-xl.jpg.adapt.768w.jpg 768w, https://media.contentapi.ea.com/content/dam/eacom/SIMS/common/ts-page-bg-spark-something-xl.jpg.adapt.1024w.jpg 1024w, https://media.contentapi.ea.com/content/dam/eacom/SIMS/common/ts-page-bg-spark-something-xl.jpg.adapt.1456w.jpg 1320w, https://media.contentapi.ea.com/content/dam/eacom/SIMS/common/ts-page-bg-spark-something-xl.jpg.adapt.1920w.jpg 1456w" />
+        </ea-image>
+    </ea-page-background>
+    <ea-elements-loader elements="ea-local-nav-advanced, ea-link">
+    </ea-elements-loader>
+    <ea-local-nav-advanced aria-label-text="Local" home-text="The Sims" home-tooltip="The Sims"
+        home-link="/games/the-sims"
+        logo-image="https://media.contentapi.ea.com/content/dam/eacom/SIMS/PC/common/ts-nav-bar-logo-white.svg"
+        logo-tooltip="" theme="light" shelf-type="band" open-drawer-text="Menu" close-drawer-text="Close" mini
+        unresolved>
+
+        <a title="The Sims" href="/games/the-sims">
+            The Sims
+
+            <img src="https://media.contentapi.ea.com/content/dam/eacom/SIMS/PC/common/ts-nav-bar-logo-white.svg" />
+
+        </a>
+
+        <ea-elements-loader elements="ea-local-nav-shelf-sub-nav">
+        </ea-elements-loader>
+        <ea-local-nav-shelf-sub-nav slot="local-nav-shelf-link" toggle-text=" Games" theme="light" type="simple"
+            unresolved>
+
+            <ea-elements-loader elements="ea-local-nav-shelf-sub-nav-section">
+            </ea-elements-loader>
+            <ea-local-nav-shelf-sub-nav-section title-text=" Games" slot="sub-nav-section" unresolved>
+
+                <ea-elements-loader elements="ea-local-nav-shelf-sub-nav-section-link">
+                </ea-elements-loader>
+                <ea-local-nav-shelf-sub-nav-section-link slot="sub-nav-section-link" link-text="The Sims 4"
+                    link-href="https://www.ea.com/games/the-sims/the-sims-4" link-target="_self" unresolved>
+                    <a href="https://www.ea.com/games/the-sims/the-sims-4">The Sims 4</a>
+                </ea-local-nav-shelf-sub-nav-section-link>
+
+                <ea-elements-loader elements="ea-local-nav-shelf-sub-nav-section-link">
+                </ea-elements-loader>
+                <ea-local-nav-shelf-sub-nav-section-link slot="sub-nav-section-link" link-text="The Sims FreePlay"
+                    link-href="/games/the-sims/the-sims-freeplay" link-target="_self" unresolved>
+                    <a href="/games/the-sims/the-sims-freeplay">The Sims FreePlay</a>
+                </ea-local-nav-shelf-sub-nav-section-link>
+
+                <ea-elements-loader elements="ea-local-nav-shelf-sub-nav-section-link">
+                </ea-elements-loader>
+                <ea-local-nav-shelf-sub-nav-section-link slot="sub-nav-section-link" link-text="The Sims Mobile"
+                    link-href="/games/the-sims/the-sims-mobile" link-target="_self" unresolved>
+                    <a href="/games/the-sims/the-sims-mobile">The Sims Mobile</a>
+                </ea-local-nav-shelf-sub-nav-section-link>
+
+            </ea-local-nav-shelf-sub-nav-section>
+
+        </ea-local-nav-shelf-sub-nav>
+        <ea-link slot="local-nav-shelf-link" class="eapl-local-nav__shelf-link" text-color="dark"
+            link-href="/games/the-sims/news" link-title="" link-text="News" unresolved>
+            <a href="/games/the-sims/news">News</a>
+        </ea-link>
+        <ea-link slot="local-nav-shelf-link" class="eapl-local-nav__shelf-link" text-color="dark"
+            link-href="/games/the-sims/spark-something" link-title="" link-text="Spark Something" unresolved>
+            <a href="/games/the-sims/spark-something">Spark Something</a>
+        </ea-link>
+
+        <ea-elements-loader elements="ea-local-nav-shelf-sub-nav">
+        </ea-elements-loader>
+        <ea-local-nav-shelf-sub-nav slot="local-nav-shelf-link" toggle-text="Help" theme="light" type="simple"
+            unresolved>
+
+            <ea-elements-loader elements="ea-local-nav-shelf-sub-nav-section">
+            </ea-elements-loader>
+            <ea-local-nav-shelf-sub-nav-section title-text=" Help" slot="sub-nav-section" unresolved>
+
+                <ea-elements-loader elements="ea-local-nav-shelf-sub-nav-section-link">
+                </ea-elements-loader>
+                <ea-local-nav-shelf-sub-nav-section-link slot="sub-nav-section-link" link-text="Cheats"
+                    link-href="/games/the-sims/cheats" link-target="_self" unresolved>
+                    <a href="/games/the-sims/cheats">Cheats</a>
+                </ea-local-nav-shelf-sub-nav-section-link>
+
+                <ea-elements-loader elements="ea-local-nav-shelf-sub-nav-section-link">
+                </ea-elements-loader>
+                <ea-local-nav-shelf-sub-nav-section-link slot="sub-nav-section-link" link-text="FAQ"
+                    link-href="/games/the-sims/faqs" link-target="_self" unresolved>
+                    <a href="/games/the-sims/faqs">FAQ</a>
+                </ea-local-nav-shelf-sub-nav-section-link>
+
+                <ea-elements-loader elements="ea-local-nav-shelf-sub-nav-section-link">
+                </ea-elements-loader>
+                <ea-local-nav-shelf-sub-nav-section-link slot="sub-nav-section-link" link-text="Tips &amp; Tricks"
+                    link-href="/games/the-sims/tips-and-tricks" link-target="_self" unresolved>
+                    <a href="/games/the-sims/tips-and-tricks">Tips &amp; Tricks</a>
+                </ea-local-nav-shelf-sub-nav-section-link>
+            </ea-local-nav-shelf-sub-nav-section>
+        </ea-local-nav-shelf-sub-nav>
+        <ea-elements-loader elements="ea-local-nav-shelf-sub-nav">
+        </ea-elements-loader>
+        <ea-local-nav-shelf-sub-nav slot="local-nav-shelf-link" toggle-text="More" theme="light" type="simple"
+            unresolved>
+
+            <ea-elements-loader elements="ea-local-nav-shelf-sub-nav-section">
+            </ea-elements-loader>
+            <ea-local-nav-shelf-sub-nav-section title-text="More" slot="sub-nav-section" unresolved>
+
+                <ea-elements-loader elements="ea-local-nav-shelf-sub-nav-section-link">
+                </ea-elements-loader>
+                <ea-local-nav-shelf-sub-nav-section-link slot="sub-nav-section-link" link-text="Newsletter"
+                    link-href="/games/the-sims/newsletter" link-target="_self" unresolved>
+                    <a href="/games/the-sims/newsletter">Newsletter</a>
+                </ea-local-nav-shelf-sub-nav-section-link>
+
+                <ea-elements-loader elements="ea-local-nav-shelf-sub-nav-section-link">
+                </ea-elements-loader>
+                <ea-local-nav-shelf-sub-nav-section-link slot="sub-nav-section-link" link-text="EA Play"
+                    link-href="/ea-play" link-target="_self" unresolved>
+                    <a href="/ea-play">EA Play</a>
+                </ea-local-nav-shelf-sub-nav-section-link>
+            </ea-local-nav-shelf-sub-nav-section>
+        </ea-local-nav-shelf-sub-nav>
+        <ea-elements-loader elements="ea-local-nav-drawer-sub-nav-advanced">
+        </ea-elements-loader>
+        <ea-local-nav-drawer-sub-nav-advanced slot="local-nav-drawer-link" toggle-text=" Games" toggle-tooltip=""
+            theme="light" type="simple" unresolved>
+            <ea-elements-loader elements="ea-link">
+            </ea-elements-loader>
+            <ea-link slot="local-nav-drawer-sub-link" class="eapl-local-nav__drawer-sub-link"
+                link-href="https://www.ea.com/games/the-sims/the-sims-4" link-title="" link-text="The Sims 4"
+                text-color="" unresolved>
+                <a href="https://www.ea.com/games/the-sims/the-sims-4">The Sims 4</a>
+            </ea-link>
+            <ea-elements-loader elements="ea-link">
+            </ea-elements-loader>
+            <ea-link slot="local-nav-drawer-sub-link" class="eapl-local-nav__drawer-sub-link"
+                link-href="/games/the-sims/the-sims-freeplay" link-title="" link-text="The Sims FreePlay" text-color=""
+                unresolved>
+                <a href="/games/the-sims/the-sims-freeplay">The Sims FreePlay</a>
+            </ea-link>
+            <ea-elements-loader elements="ea-link">
+            </ea-elements-loader>
+            <ea-link slot="local-nav-drawer-sub-link" class="eapl-local-nav__drawer-sub-link"
+                link-href="/games/the-sims/the-sims-mobile" link-title="" link-text="The Sims Mobile" text-color=""
+                unresolved>
+                <a href="/games/the-sims/the-sims-mobile">The Sims Mobile</a>
+            </ea-link>
+        </ea-local-nav-drawer-sub-nav-advanced>
+        <ea-elements-loader elements="ea-link">
+        </ea-elements-loader>
+        <ea-link slot="local-nav-drawer-link" class="eapl-local-nav__drawer-link" link-href="/games/the-sims/news"
+            link-title="" link-text="News" text-color="dark" unresolved>
+            <a href="/games/the-sims/news">News</a>
+        </ea-link>
+        <ea-elements-loader elements="ea-link">
+        </ea-elements-loader>
+        <ea-link slot="local-nav-drawer-link" class="eapl-local-nav__drawer-link"
+            link-href="/games/the-sims/spark-something" link-title="" link-text="Spark Something" text-color="dark"
+            unresolved>
+            <a href="/games/the-sims/spark-something">Spark Something</a>
+        </ea-link>
+        <ea-elements-loader elements="ea-local-nav-drawer-sub-nav-advanced">
+        </ea-elements-loader>
+        <ea-local-nav-drawer-sub-nav-advanced slot="local-nav-drawer-link" toggle-text="Help" toggle-tooltip=""
+            theme="light" type="simple" unresolved>
+            <ea-elements-loader elements="ea-link">
+            </ea-elements-loader>
+            <ea-link slot="local-nav-drawer-sub-link" class="eapl-local-nav__drawer-sub-link"
+                link-href="/games/the-sims/cheats" link-title="" link-text="Cheats" text-color="" unresolved>
+                <a href="/games/the-sims/cheats">Cheats</a>
+            </ea-link>
+            <ea-elements-loader elements="ea-link">
+            </ea-elements-loader>
+            <ea-link slot="local-nav-drawer-sub-link" class="eapl-local-nav__drawer-sub-link"
+                link-href="/games/the-sims/faqs" link-title="" link-text="FAQ" text-color="" unresolved>
+                <a href="/games/the-sims/faqs">FAQ</a>
+            </ea-link>
+            <ea-elements-loader elements="ea-link">
+            </ea-elements-loader>
+            <ea-link slot="local-nav-drawer-sub-link" class="eapl-local-nav__drawer-sub-link"
+                link-href="/games/the-sims/tips-and-tricks" link-title="" link-text="Tips &amp; Tricks" text-color=""
+                unresolved>
+                <a href="/games/the-sims/tips-and-tricks">Tips &amp; Tricks</a>
+            </ea-link>
+        </ea-local-nav-drawer-sub-nav-advanced>
+        <ea-elements-loader elements="ea-local-nav-drawer-sub-nav-advanced">
+        </ea-elements-loader>
+        <ea-local-nav-drawer-sub-nav-advanced slot="local-nav-drawer-link" toggle-text="More" toggle-tooltip=""
+            theme="light" type="simple" unresolved>
+            <ea-elements-loader elements="ea-link">
+            </ea-elements-loader>
+            <ea-link slot="local-nav-drawer-sub-link" class="eapl-local-nav__drawer-sub-link"
+                link-href="/games/the-sims/newsletter" link-title="" link-text="Newsletter" text-color="" unresolved>
+                <a href="/games/the-sims/newsletter">Newsletter</a>
+            </ea-link>
+            <ea-elements-loader elements="ea-link">
+            </ea-elements-loader>
+            <ea-link slot="local-nav-drawer-sub-link" class="eapl-local-nav__drawer-sub-link" link-href="/ea-play"
+                link-title="" link-text="EA Play" text-color="" unresolved>
+                <a href="/ea-play">EA Play</a>
+            </ea-link>
+        </ea-local-nav-drawer-sub-nav-advanced>
+        <ea-elements-loader elements="ea-cta-dropdown, ea-hybrid-modal-invoker">
+        </ea-elements-loader>
+        <ea-cta-dropdown slot="cta-dropdown" theme="dark" cta-title-text="Play for Free*"
+            cta-link="/games/the-sims/the-sims-4/buy" border-color="brand" fill-color="brand" text-color="light"
+            unresolved>
+            <ea-container>
+                <ea-elements-loader elements="ea-cta">
+                </ea-elements-loader>
+                <ea-cta slot="cta" type="standard" link-url="https://www.ea.com/games/the-sims/the-sims-4/download"
+                    link-text="EA App for Windows" icon="none" fill-color="brand" text-color="light" stroke-color="none"
+                    target="_self" intent="buy" emphasis="primary" unresolved>
+                    <a href="https://www.ea.com/games/the-sims/the-sims-4/download">
+                        EA App for Windows
+                    </a>
+                </ea-cta>
+            </ea-container>
+            <ea-container>
+                <ea-elements-loader elements="ea-cta">
+                </ea-elements-loader>
+                <ea-cta slot="cta" type="standard" link-url="https://www.ea.com/games/the-sims/the-sims-4/download"
+                    link-text="Origin for Mac" icon="none" fill-color="brand" text-color="light" stroke-color="none"
+                    target="_self" intent="buy" emphasis="primary" unresolved>
+                    <a href="https://www.ea.com/games/the-sims/the-sims-4/download">
+                        Origin for Mac
+                    </a>
+                </ea-cta>
+            </ea-container>
+            <ea-container>
+                <ea-elements-loader elements="ea-cta">
+                </ea-elements-loader>
+                <ea-cta slot="cta" type="standard" link-url="https://lnk.to/the-sims-4-base-game"
+                    link-text="Playstation" icon="none" fill-color="brand" text-color="light" stroke-color="none"
+                    target="_self" intent="buy" emphasis="primary" unresolved>
+                    <a href="https://lnk.to/the-sims-4-base-game">
+                        Playstation
+                    </a>
+                </ea-cta>
+            </ea-container>
+            <ea-container>
+                <ea-elements-loader elements="ea-cta">
+                </ea-elements-loader>
+                <ea-cta slot="cta" type="standard" link-url="https://www.xbox.com/games/store/the-sims-4/c08jxnk0vg5l"
+                    link-text="Xbox" icon="none" fill-color="brand" text-color="light" stroke-color="none"
+                    target="_self" intent="buy" emphasis="primary" unresolved>
+                    <a href="https://www.xbox.com/games/store/the-sims-4/c08jxnk0vg5l">
+                        Xbox
+                    </a>
+                </ea-cta>
+            </ea-container>
+            <ea-container>
+                <ea-elements-loader elements="ea-cta">
+                </ea-elements-loader>
+                <ea-cta slot="cta" type="standard" link-url="https://store.steampowered.com/app/1222670/The_Sims_4/"
+                    link-text="Steam" icon="none" fill-color="brand" text-color="light" stroke-color="none"
+                    target="_self" intent="buy" emphasis="primary" unresolved>
+                    <a href="https://store.steampowered.com/app/1222670/The_Sims_4/">
+                        Steam
+                    </a>
+                </ea-cta>
+            </ea-container>
+        </ea-cta-dropdown>
+        <ea-elements-loader elements="ea-local-nav-dropdown">
+        </ea-elements-loader>
+        <ea-local-nav-dropdown slot="local-nav-dropdown" theme="dark" menu-title="" cta-title-text="Play for Free*"
+            cta-link="/games/the-sims/the-sims-4/buy" border-color="brand" fill-color="brand" text-color="light"
+            unresolved>
+            <ea-container>
+                <ea-elements-loader elements="ea-cta">
+                </ea-elements-loader>
+                <ea-cta slot="cta" type="standard" link-url="https://www.ea.com/games/the-sims/the-sims-4/download"
+                    link-text="EA App for Windows" icon="none" fill-color="brand" text-color="light" stroke-color="none"
+                    target="_self" intent="buy" emphasis="primary" unresolved>
+                    <a href="https://www.ea.com/games/the-sims/the-sims-4/download">
+                        EA App for Windows
+                    </a>
+                </ea-cta>
+            </ea-container>
+            <ea-container>
+                <ea-elements-loader elements="ea-cta">
+                </ea-elements-loader>
+                <ea-cta slot="cta" type="standard" link-url="https://www.ea.com/games/the-sims/the-sims-4/download"
+                    link-text="Origin for Mac" icon="none" fill-color="brand" text-color="light" stroke-color="none"
+                    target="_self" intent="buy" emphasis="primary" unresolved>
+                    <a href="https://www.ea.com/games/the-sims/the-sims-4/download">
+                        Origin for Mac
+                    </a>
+                </ea-cta>
+            </ea-container>
+            <ea-container>
+                <ea-elements-loader elements="ea-cta">
+                </ea-elements-loader>
+                <ea-cta slot="cta" type="standard" link-url="https://lnk.to/the-sims-4-base-game"
+                    link-text="Playstation" icon="none" fill-color="brand" text-color="light" stroke-color="none"
+                    target="_self" intent="buy" emphasis="primary" unresolved>
+                    <a href="https://lnk.to/the-sims-4-base-game">
+                        Playstation
+                    </a>
+                </ea-cta>
+            </ea-container>
+            <ea-container>
+                <ea-elements-loader elements="ea-cta">
+                </ea-elements-loader>
+                <ea-cta slot="cta" type="standard" link-url="https://www.xbox.com/games/store/the-sims-4/c08jxnk0vg5l"
+                    link-text="Xbox" icon="none" fill-color="brand" text-color="light" stroke-color="none"
+                    target="_self" intent="buy" emphasis="primary" unresolved>
+                    <a href="https://www.xbox.com/games/store/the-sims-4/c08jxnk0vg5l">
+                        Xbox
+                    </a>
+                </ea-cta>
+            </ea-container>
+            <ea-container>
+                <ea-elements-loader elements="ea-cta">
+                </ea-elements-loader>
+                <ea-cta slot="cta" type="standard" link-url="https://store.steampowered.com/app/1222670/The_Sims_4/"
+                    link-text="Steam" icon="none" fill-color="brand" text-color="light" stroke-color="none"
+                    target="_self" intent="buy" emphasis="primary" unresolved>
+                    <a href="https://store.steampowered.com/app/1222670/The_Sims_4/">
+                        Steam
+                    </a>
+                </ea-cta>
+            </ea-container>
+        </ea-local-nav-dropdown>
+    </ea-local-nav-advanced>
+    <ea-elements-loader elements="ea-spacer">
+    </ea-elements-loader>
+    <ea-spacer unresolved smallest="93px" small="93px" medium="96px" large="96px" largest="100px">
+    </ea-spacer>
+    <main>
+        <ea-elements-loader elements="ea-section">
+        </ea-elements-loader>
+        <ea-section unresolved slot="section" type="railed" layout="100" background-color="none"
+            background-overflow="hidden" spacing-top="none" spacing-bottom="none"
+            background-image-smallest="https://media.contentapi.ea.com/content/dam/eacom/SIMS/220923-franchise-page-rebrand/common/the-sims-spark-something-bg-landing-hero-spark-something-xl.jpg.adapt.320w.jpg"
+            background-image-small="https://media.contentapi.ea.com/content/dam/eacom/SIMS/220923-franchise-page-rebrand/common/the-sims-spark-something-bg-landing-hero-spark-something-xl.jpg.adapt.768w.jpg"
+            background-image-medium="https://media.contentapi.ea.com/content/dam/eacom/SIMS/220923-franchise-page-rebrand/common/the-sims-spark-something-bg-landing-hero-spark-something-xl.jpg.adapt.1024w.jpg"
+            background-image-large="https://media.contentapi.ea.com/content/dam/eacom/SIMS/220923-franchise-page-rebrand/common/the-sims-spark-something-bg-landing-hero-spark-something-xl.jpg.adapt.1456w.jpg"
+            background-image-largest="https://media.contentapi.ea.com/content/dam/eacom/SIMS/220923-franchise-page-rebrand/common/the-sims-spark-something-bg-landing-hero-spark-something-xl.jpg.adapt.1920w.jpg"
+            image-tooltip="">
+            <img src="https://media.contentapi.ea.com/content/dam/eacom/SIMS/220923-franchise-page-rebrand/common/the-sims-spark-something-bg-landing-hero-spark-something-xl.jpg.adapt.320w.jpg"
+                alt=""
+                srcset="https://media.contentapi.ea.com/content/dam/eacom/SIMS/220923-franchise-page-rebrand/common/the-sims-spark-something-bg-landing-hero-spark-something-xl.jpg.adapt.320w.jpg 320w, https://media.contentapi.ea.com/content/dam/eacom/SIMS/220923-franchise-page-rebrand/common/the-sims-spark-something-bg-landing-hero-spark-something-xl.jpg.adapt.768w.jpg 768w, https://media.contentapi.ea.com/content/dam/eacom/SIMS/220923-franchise-page-rebrand/common/the-sims-spark-something-bg-landing-hero-spark-something-xl.jpg.adapt.1024w.jpg 1024w, https://media.contentapi.ea.com/content/dam/eacom/SIMS/220923-franchise-page-rebrand/common/the-sims-spark-something-bg-landing-hero-spark-something-xl.jpg.adapt.1456w.jpg 1320w, https://media.contentapi.ea.com/content/dam/eacom/SIMS/220923-franchise-page-rebrand/common/the-sims-spark-something-bg-landing-hero-spark-something-xl.jpg.adapt.1920w.jpg 1456w" />
+            <ea-section-column slot="section-column" text-align="center" mobile-order="0">
+                <ea-elements-loader elements="ea-spacer">
+                </ea-elements-loader>
+                <ea-spacer unresolved smallest="100vw" small="100vw" medium="56vw" large="28vw" largest="28vw">
+                </ea-spacer>
+                <ea-elements-loader elements="ea-text">
+                </ea-elements-loader>
+                <ea-text unresolved slot="text" text-color="light">
+                    <h1 class="d1" style="margin: 0 auto; max-width: 920.0px;">Spark Something</h1>
+                    <p>&nbsp;</p>
+                    <p style="margin: 0 auto; max-width: 920.0px;">At The Sims, we believe in the power of creativity.
+                        Spark Something is a celebration of creativity and the role our games and brand have played in
+                        sparking the creative journey of rule breakers everywhere for over 23 years. It’s the
+                        declaration of our ongoing commitment to creators. And the optimistic, inclusive, future they
+                        shape by showing up authentically and creating fearlessly. Spark Something is a love note to
+                        creative potential. A celebration of our ability to inspire creativity in others. And
+                        encouragement to seek out that creative spark everywhere we go.</p>
+                </ea-text>
+                <ea-elements-loader elements="ea-spacer">
+                </ea-elements-loader>
+                <ea-spacer unresolved smallest="24px" small="24px" medium="24px" large="24px" largest="24px">
+                </ea-spacer>
+                <ea-elements-loader elements="ea-cta">
+                </ea-elements-loader>
+                <ea-cta slot="cta" type="standard" link-text="Watch the Film" icon="none" fill-color="light-brand"
+                    text-color="dark" stroke-color="none" target="_self" intent="misc" modal-id="modalPasstheSpark"
+                    emphasis="primary" unresolved>
+                    <a>
+                        Watch the Film
+                    </a>
+                </ea-cta>
+                <ea-elements-loader elements="ea-spacer">
+                </ea-elements-loader>
+                <ea-spacer unresolved smallest="32px" small="32px" medium="4vw" large="2vw" largest="2vw">
+                </ea-spacer>
+            </ea-section-column>
+        </ea-section>
+        <ea-elements-loader elements="ea-modal">
+        </ea-elements-loader>
+        <ea-modal modal unresolved id="modalPasstheSpark" theme="dark" type="railed">
+            <ea-elements-loader elements="ea-youtube">
+            </ea-elements-loader>
+            <ea-youtube unresolved slot="youtube" video-id="qd5lzbBPPbg" playlist="" default-age-gate="" theme="light"
+                icon-theme="light" autoplay="0" controls="1" rel="0" annotations="3" hide-info="0"
+                age-gate-alignment="center-left"
+                age-gate-message="This video is age-restricted and only available on Youtube."
+                more-link-text="Learn More" more-link-url="https://support.google.com/youtube/answer/2802167?hl=en"
+                watch-link-text="Watch on Youtube"
+                cover-image-smallest="https://media.contentapi.ea.com/content/dam/eacom/SIMS/videos/2022/11/90544318-7032-f3f6-357c-25431b2c3831.youtube/subassets/poster.jpg.adapt.crop16x9.320w.jpg"
+                cover-image-small="https://media.contentapi.ea.com/content/dam/eacom/SIMS/videos/2022/11/90544318-7032-f3f6-357c-25431b2c3831.youtube/subassets/poster.jpg.adapt.crop16x9.767w.jpg"
+                cover-image-medium="https://media.contentapi.ea.com/content/dam/eacom/SIMS/videos/2022/11/90544318-7032-f3f6-357c-25431b2c3831.youtube/subassets/poster.jpg.adapt.crop16x9.1023w.jpg"
+                cover-image-large="https://media.contentapi.ea.com/content/dam/eacom/SIMS/videos/2022/11/90544318-7032-f3f6-357c-25431b2c3831.youtube/subassets/poster.jpg.adapt.crop16x9.1455w.jpg"
+                cover-image-largest="https://media.contentapi.ea.com/content/dam/eacom/SIMS/videos/2022/11/90544318-7032-f3f6-357c-25431b2c3831.youtube/subassets/poster.jpg.adapt.crop16x9.1920w.jpg"
+                cover-image-tooltip="" button-color="dark">
+                <div itemscope itemtype="http://schema.org/VideoObject">
+                    <link itemprop="url" href="https://www.youtube.com/watch?v=qd5lzbBPPbg">
+                    <link itemprop="thumbnailUrl"
+                        href="https://media.contentapi.ea.com/content/dam/eacom/SIMS/videos/2022/11/90544318-7032-f3f6-357c-25431b2c3831.youtube/subassets/poster.jpg.adapt.crop16x9.1920w.jpg">
+                    <iframe src="https://www.youtube.com/embed/qd5lzbBPPbg"></iframe>
+                </div>
+            </ea-youtube>
+        </ea-modal>
+        <ea-elements-loader elements="ea-section">
+        </ea-elements-loader>
+        <ea-section unresolved slot="section" type="full-bleed" layout="100" background-color="none"
+            background-overflow="hidden" spacing-top="none" spacing-bottom="none">
+            <ea-section-column slot="section-column" text-align="center" mobile-order="0">
+                <ea-elements-loader elements="ea-spacer">
+                </ea-elements-loader>
+                <ea-spacer unresolved smallest="64px" small="64px" medium="128px" large="128px" largest="128px">
+                </ea-spacer>
+                <ea-elements-loader elements="ea-text">
+                </ea-elements-loader>
+                <ea-text unresolved slot="text" text-color="light">
+                    <h1 class="d1" style="margin: 0 auto; max-width: 920.0px;">Sims Sessions</h1>
+                    <p style="margin: 0 auto; max-width: 920.0px;">Join your favorite new artists in the studio with
+                        Sims Sessions, a YouTube series that goes behind the scenes as musicians attempt to record their
+                        hit songs in Simlish before they land in game.</p>
+                </ea-text>
+                <ea-elements-loader elements="ea-stream">
+                </ea-elements-loader>
+                <ea-stream unresolved tile-type="vertical" tile-text-align="center" tile-text-color="light"
+                    tile-color="none" hide-brand-stroke hide-byline spacing-top="none" spacing-bottom="none" hide-tags
+                    tile-media-shape="rectangle" tile-type="vertical" tile-text-color="light" tile-scrim-color="none"
+                    tile-scrim-opacity="medium" spacing-top="none" ui-color="light">
+                    <ea-elements-loader elements="ea-tile">
+                    </ea-elements-loader>
+                    <ea-container slot="container" filter-key="All">
+                        <ea-tile unresolved slot="tile" style="--ea-animation-index:0"
+                            media="https://media.contentapi.ea.com/content/dam/eacom/SIMS/images/2022/10/ts-tile-2022-sims-sessions-with-anitta.jpg.adapt.crop16x9.jpg"
+                            title-text="Sims Sessions with Anitta" media-type="image" tooltip="">
+                            <h3>Sims Sessions with Anitta</h3>
+                            <ea-tile-copy slot="copy">
+                            </ea-tile-copy>
+                            <ea-elements-loader elements="ea-cta">
+                            </ea-elements-loader>
+                            <ea-cta slot="cta" type="standard-small" link-text="Watch Episode" icon="none"
+                                fill-color="none" text-color="light" stroke-color="light" target="_self" intent="misc"
+                                modal-id="modalAnittaEpisode" emphasis="primary" unresolved>
+                                <a>
+                                    Watch Episode
+                                </a>
+                            </ea-cta>
+                        </ea-tile>
+                    </ea-container>
+                    <ea-elements-loader elements="ea-tile">
+                    </ea-elements-loader>
+                    <ea-container slot="container" filter-key="All">
+                        <ea-tile unresolved slot="tile" style="--ea-animation-index:0"
+                            media="https://media.contentapi.ea.com/content/dam/eacom/SIMS/images/2023/03/ts-tile-2023-sims-sessions-with-becca-hatch.jpg.adapt.crop16x9.jpg"
+                            title-text="Sims Sessions with Becca Hatch" media-type="image" tooltip="">
+                            <h3>Sims Sessions with Becca Hatch</h3>
+                            <ea-tile-copy slot="copy">
+                            </ea-tile-copy>
+                            <ea-elements-loader elements="ea-cta">
+                            </ea-elements-loader>
+                            <ea-cta slot="cta" type="standard-small" link-text="Watch Episode" icon="none"
+                                fill-color="none" text-color="light" stroke-color="light" target="_self" intent="misc"
+                                modal-id="modalBeccaHatchEpisode" emphasis="primary" unresolved>
+                                <a>
+                                    Watch Episode
+                                </a>
+                            </ea-cta>
+                        </ea-tile>
+                    </ea-container>
+                    <ea-elements-loader elements="ea-tile">
+                    </ea-elements-loader>
+                    <ea-container slot="container" filter-key="All">
+                        <ea-tile unresolved slot="tile" style="--ea-animation-index:0"
+                            media="https://media.contentapi.ea.com/content/dam/eacom/SIMS/images/2023/06/sims-sessions-breland-thumbnail.jpg.adapt.crop16x9.jpg"
+                            title-text="Sims Sessions with Breland" media-type="image" tooltip="">
+                            <h3>Sims Sessions with Breland</h3>
+                            <ea-tile-copy slot="copy">
+                            </ea-tile-copy>
+                            <ea-elements-loader elements="ea-cta">
+                            </ea-elements-loader>
+                            <ea-cta slot="cta" type="standard-small" link-text="Watch Episode" icon="none"
+                                fill-color="none" text-color="light" stroke-color="light" target="_self" intent="misc"
+                                modal-id="modalBrelandEpisode" emphasis="primary" unresolved>
+                                <a>
+                                    Watch Episode
+                                </a>
+                            </ea-cta>
+                        </ea-tile>
+                    </ea-container>
+                    <ea-elements-loader elements="ea-tile">
+                    </ea-elements-loader>
+                    <ea-container slot="container" filter-key="All">
+                        <ea-tile unresolved slot="tile" style="--ea-animation-index:0"
+                            media="https://media.contentapi.ea.com/content/dam/eacom/SIMS/images/2022/10/ts-tile-2022-sims-sessions-with-coming-soon-02.jpg.adapt.crop16x9.jpg"
+                            title-text="Coming Soon!" media-type="image" tooltip="">
+                            <h3>Coming Soon!</h3>
+                            <ea-tile-copy slot="copy">
+                            </ea-tile-copy>
+                        </ea-tile>
+                    </ea-container>
+                </ea-stream>
+                <ea-elements-loader elements="ea-spacer">
+                </ea-elements-loader>
+                <ea-spacer unresolved smallest="64px" small="64px" medium="128px" large="128px" largest="128px">
+                </ea-spacer>
+            </ea-section-column>
+        </ea-section>
+        <ea-elements-loader elements="ea-modal">
+        </ea-elements-loader>
+        <ea-modal modal unresolved id="modalBrelandEpisode" theme="dark" type="railed">
+            <ea-elements-loader elements="ea-section">
+            </ea-elements-loader>
+            <ea-section unresolved slot="section" type="full-bleed" layout="100" background-color="none"
+                background-overflow="hidden" spacing-top="none" spacing-bottom="none">
+                <ea-section-column slot="section-column" indent-left="2" indent-right="2" text-align="left"
+                    mobile-order="0">
+                    <ea-elements-loader elements="ea-media">
+                    </ea-elements-loader>
+                    <ea-media slot="media" text-color="light" spacing-top="none" spacing-bottom="none" unresolved>
+                        <ea-elements-loader elements="ea-youtube">
+                        </ea-elements-loader>
+                        <ea-youtube unresolved slot="youtube" video-id="k5oqn1Pzrfo" playlist="" default-age-gate=""
+                            theme="light" icon-theme="light" autoplay="0" controls="1" rel="0" annotations="3"
+                            hide-info="0" age-gate-alignment="center-left"
+                            age-gate-message="This video is age-restricted and only available on Youtube."
+                            more-link-text="Learn More"
+                            more-link-url="https://support.google.com/youtube/answer/2802167?hl=en"
+                            cover-image-tooltip="" button-color="dark">
+                            <div itemscope itemtype="http://schema.org/VideoObject">
+                                <link itemprop="url" href="https://www.youtube.com/watch?v=k5oqn1Pzrfo">
+                                <link itemprop="thumbnailUrl"
+                                    href="https://media.contentapi.ea.com/content/dam/eacom/SIMS/videos/2023/06/5c789574-19c8-94f1-fb8a-fa3f298f7a31.youtube/subassets/poster.jpg.adapt.crop16x9.1920w.jpg">
+                                <iframe src="https://www.youtube.com/embed/k5oqn1Pzrfo"></iframe>
+                            </div>
+                        </ea-youtube>
+                    </ea-media>
+                </ea-section-column>
+            </ea-section>
+        </ea-modal>
+        <ea-elements-loader elements="ea-modal">
+        </ea-elements-loader>
+        <ea-modal modal unresolved id="modalBeccaHatchEpisode" theme="dark" type="railed">
+            <ea-elements-loader elements="ea-section">
+            </ea-elements-loader>
+            <ea-section unresolved slot="section" type="full-bleed" layout="100" background-color="none"
+                background-overflow="hidden" spacing-top="none" spacing-bottom="none">
+                <ea-section-column slot="section-column" indent-left="2" indent-right="2" text-align="left"
+                    mobile-order="0">
+                    <ea-elements-loader elements="ea-media">
+                    </ea-elements-loader>
+                    <ea-media slot="media" text-color="light" spacing-top="none" spacing-bottom="none" unresolved>
+                        <ea-elements-loader elements="ea-youtube">
+                        </ea-elements-loader>
+                        <ea-youtube unresolved slot="youtube" video-id="Xm22RM7fNKo" playlist="" default-age-gate=""
+                            theme="light" icon-theme="light" autoplay="0" controls="1" rel="0" annotations="3"
+                            hide-info="0" age-gate-alignment="center-left"
+                            age-gate-message="This video is age-restricted and only available on Youtube."
+                            more-link-text="Learn More"
+                            more-link-url="https://support.google.com/youtube/answer/2802167?hl=en"
+                            watch-link-text="Watch on Youtube"
+                            cover-image-smallest="https://media.contentapi.ea.com/content/dam/eacom/SIMS/videos/2023/03/7c6efb3d-50e9-21ed-d7f8-6ccf16044f31.youtube/subassets/poster.jpg.adapt.crop16x9.320w.jpg"
+                            cover-image-small="https://media.contentapi.ea.com/content/dam/eacom/SIMS/videos/2023/03/7c6efb3d-50e9-21ed-d7f8-6ccf16044f31.youtube/subassets/poster.jpg.adapt.crop16x9.767w.jpg"
+                            cover-image-medium="https://media.contentapi.ea.com/content/dam/eacom/SIMS/videos/2023/03/7c6efb3d-50e9-21ed-d7f8-6ccf16044f31.youtube/subassets/poster.jpg.adapt.crop16x9.1023w.jpg"
+                            cover-image-large="https://media.contentapi.ea.com/content/dam/eacom/SIMS/videos/2023/03/7c6efb3d-50e9-21ed-d7f8-6ccf16044f31.youtube/subassets/poster.jpg.adapt.crop16x9.1455w.jpg"
+                            cover-image-largest="https://media.contentapi.ea.com/content/dam/eacom/SIMS/videos/2023/03/7c6efb3d-50e9-21ed-d7f8-6ccf16044f31.youtube/subassets/poster.jpg.adapt.crop16x9.1920w.jpg"
+                            cover-image-tooltip="" button-color="dark">
+                            <div itemscope itemtype="http://schema.org/VideoObject">
+                                <link itemprop="url" href="https://www.youtube.com/watch?v=Xm22RM7fNKo">
+                                <link itemprop="thumbnailUrl"
+                                    href="https://media.contentapi.ea.com/content/dam/eacom/SIMS/videos/2023/03/7c6efb3d-50e9-21ed-d7f8-6ccf16044f31.youtube/subassets/poster.jpg.adapt.crop16x9.1920w.jpg">
+                                <iframe src="https://www.youtube.com/embed/Xm22RM7fNKo"></iframe>
+                            </div>
+                        </ea-youtube>
+                    </ea-media>
+                </ea-section-column>
+            </ea-section>
+        </ea-modal>
+        <ea-elements-loader elements="ea-modal">
+        </ea-elements-loader>
+        <ea-modal modal unresolved id="modalAnittaEpisode" theme="dark" type="railed">
+            <ea-elements-loader elements="ea-section">
+            </ea-elements-loader>
+            <ea-section unresolved slot="section" type="full-bleed" layout="100" background-color="none"
+                background-overflow="hidden" spacing-top="none" spacing-bottom="none">
+                <ea-section-column slot="section-column" indent-left="2" indent-right="2" text-align="left"
+                    mobile-order="0">
+                    <ea-elements-loader elements="ea-media">
+                    </ea-elements-loader>
+                    <ea-media slot="media" text-color="light" spacing-top="none" spacing-bottom="none" unresolved>
+                        <ea-elements-loader elements="ea-youtube">
+                        </ea-elements-loader>
+                        <ea-youtube unresolved slot="youtube" video-id="KnlFpNvcjCE" playlist="" default-age-gate=""
+                            theme="light" icon-theme="light" autoplay="0" controls="1" rel="0" annotations="3"
+                            hide-info="0" age-gate-alignment="center-left"
+                            age-gate-message="This video is age-restricted and only available on Youtube."
+                            more-link-text="Learn More"
+                            more-link-url="https://support.google.com/youtube/answer/2802167?hl=en"
+                            watch-link-text="Watch on Youtube"
+                            cover-image-smallest="https://media.contentapi.ea.com/content/dam/eacom/SIMS/videos/2022/11/3bd3ffa8-c39b-f7e5-ad9c-bbb0d75344cf.youtube/subassets/poster.jpg.adapt.crop16x9.320w.jpg"
+                            cover-image-small="https://media.contentapi.ea.com/content/dam/eacom/SIMS/videos/2022/11/3bd3ffa8-c39b-f7e5-ad9c-bbb0d75344cf.youtube/subassets/poster.jpg.adapt.crop16x9.767w.jpg"
+                            cover-image-medium="https://media.contentapi.ea.com/content/dam/eacom/SIMS/videos/2022/11/3bd3ffa8-c39b-f7e5-ad9c-bbb0d75344cf.youtube/subassets/poster.jpg.adapt.crop16x9.1023w.jpg"
+                            cover-image-large="https://media.contentapi.ea.com/content/dam/eacom/SIMS/videos/2022/11/3bd3ffa8-c39b-f7e5-ad9c-bbb0d75344cf.youtube/subassets/poster.jpg.adapt.crop16x9.1455w.jpg"
+                            cover-image-largest="https://media.contentapi.ea.com/content/dam/eacom/SIMS/videos/2022/11/3bd3ffa8-c39b-f7e5-ad9c-bbb0d75344cf.youtube/subassets/poster.jpg.adapt.crop16x9.1920w.jpg"
+                            cover-image-tooltip="" button-color="dark">
+                            <div itemscope itemtype="http://schema.org/VideoObject">
+                                <link itemprop="url" href="https://www.youtube.com/watch?v=KnlFpNvcjCE">
+                                <link itemprop="thumbnailUrl"
+                                    href="https://media.contentapi.ea.com/content/dam/eacom/SIMS/videos/2022/11/3bd3ffa8-c39b-f7e5-ad9c-bbb0d75344cf.youtube/subassets/poster.jpg.adapt.crop16x9.1920w.jpg">
+                                <iframe src="https://www.youtube.com/embed/KnlFpNvcjCE"></iframe>
+                            </div>
+                        </ea-youtube>
+                    </ea-media>
+                </ea-section-column>
+            </ea-section>
+        </ea-modal>
+        <ea-elements-loader elements="ea-section">
+        </ea-elements-loader>
+        <ea-section unresolved slot="section" type="railed" layout="100" background-color="none"
+            background-overflow="hidden" spacing-top="none" spacing-bottom="none">
+            <ea-section-column slot="section-column" text-align="left" mobile-order="0">
+                <ea-elements-loader elements="ea-spacer">
+                </ea-elements-loader>
+                <ea-spacer unresolved smallest="var(--dx-xsmall-spacer-value)" small="var(--dx-small-spacer-value)"
+                    medium="var(--dx-medium-spacer-value)" large="var(--dx-large-spacer-value)"
+                    largest="var(--dx-xlarge-spacer-value)">
+                </ea-spacer>
+                <ea-elements-loader elements="ea-text">
+                </ea-elements-loader>
+                <ea-text unresolved slot="text" text-color="light">
+                    <h1 class="d1" style="margin: 0 auto; max-width: 920.0px;">Simspiration Places</h1>
+                    <p style="margin: 0 auto; max-width: 920.0px;">Sul Sul Simmers! Like so many of you, we see
+                        inspiration everywhere, both inside and outside of our games. That's why we created
+                        Simspiration–a series that tours some of the world’s most distinctive architecture and interior
+                        design from the past and present, as seen through the eyes of a local photographer. Welcome to
+                        Simspiration!</p>
+                </ea-text>
+                <ea-elements-loader elements="ea-spacer">
+                </ea-elements-loader>
+                <ea-spacer unresolved smallest="24px" small="24px" medium="64px" large="64px" largest="64px">
+                </ea-spacer>
+            </ea-section-column>
+        </ea-section>
+        <ea-elements-loader elements="ea-section">
+        </ea-elements-loader>
+        <ea-section unresolved slot="section" type="full-bleed" layout="100" background-color="none"
+            background-overflow="hidden" spacing-top="none" spacing-bottom="none">
+            <ea-section-column slot="section-column" indent-left="1" indent-right="1" text-align="left"
+                mobile-order="0">
+                <ea-elements-loader elements="ea-spacer">
+                </ea-elements-loader>
+                <ea-spacer unresolved smallest="var(--dx-xsmall-spacer-value)" small="var(--dx-small-spacer-value)"
+                    medium="var(--dx-medium-spacer-value)" large="var(--dx-large-spacer-value)"
+                    largest="var(--dx-xlarge-spacer-value)">
+                </ea-spacer>
+                <ea-elements-loader elements="ea-grid">
+                </ea-elements-loader>
+                <ea-grid type="ordered" tile-media-shape="rectangle" layout="3up" tile-type="overlay"
+                    tile-text-align="center" tile-text-color="dark" tile-color="none" hide-eyebrow hide-brand-stroke
+                    hide-byline spacing-top="none" spacing-bottom="none" tile-scrim-color="none"
+                    tile-scrim-opacity="medium" tile-align="center" tile-vertical-align="vertical-bottom"
+                    animate-in-order="" animate-out-order="" unresolved>
+                    <ea-elements-loader elements="ea-tile">
+                    </ea-elements-loader>
+                    <ea-container slot="container" filter-key="All">
+                        <ea-tile unresolved slot="tile" style="--ea-animation-index:0"
+                            media="https://media.contentapi.ea.com/content/dam/eacom/SIMS/images/2023/03/ts4-simspiration-homepage-thumbnail-asset-oakland.jpg.adapt.crop16x9.652w.jpg"
+                            title-text="OAKLAND, CALIFORNIA USA" link-target="_blank" media-type="image"
+                            link-target="_blank" tooltip="" animatable animation-threshold="0.75" animation-on-enter
+                            animation-margin="0px"
+                            animation-overrides="{&quot;--ea-animation-timing-short&quot;:&quot;1200ms&quot;,&quot;--ea-animation-delay-long&quot;:&quot;400ms&quot;,&quot;--ea-animation-enter-section-keyframe-name&quot;:&quot;slideUpFadeIn&quot;}">
+                            <h3>OAKLAND, CALIFORNIA USA</h3>
+                            <ea-tile-copy slot="copy">
+                            </ea-tile-copy>
+                            <ea-elements-loader elements="ea-cta">
+                            </ea-elements-loader>
+                            <ea-cta slot="cta" type="graphic" link-url="/games/the-sims/news/simspiration-oakland"
+                                icon="none" fill-color="none" text-color="dark" stroke-color="dark" target="_self"
+                                intent="navigation" emphasis="primary" unresolved>
+                                <a href="/games/the-sims/news/simspiration-oakland">
+                                </a>
+                            </ea-cta>
+                        </ea-tile>
+                    </ea-container>
+                    <ea-elements-loader elements="ea-tile">
+                    </ea-elements-loader>
+                    <ea-container slot="container" filter-key="All">
+                        <ea-tile unresolved slot="tile" style="--ea-animation-index:1"
+                            media="https://media.contentapi.ea.com/content/dam/eacom/SIMS/images/2023/06/ts4-spark-something-simspiration-tiles-yucatan.jpg.adapt.crop16x9.652w.jpg"
+                            title-text="YUCATAN, MEXICO" link-target="_blank" media-type="image" link-target="_blank"
+                            tooltip="" animatable animation-threshold="0.75" animation-on-enter animation-margin="0px"
+                            animation-overrides="{&quot;--ea-animation-timing-short&quot;:&quot;1200ms&quot;,&quot;--ea-animation-delay-long&quot;:&quot;400ms&quot;,&quot;--ea-animation-enter-section-keyframe-name&quot;:&quot;slideUpFadeIn&quot;}">
+                            <h3>YUCATAN, MEXICO</h3>
+                            <ea-tile-copy slot="copy">
+                            </ea-tile-copy>
+                            <ea-elements-loader elements="ea-cta">
+                            </ea-elements-loader>
+                            <ea-cta slot="cta" type="graphic" link-url="/games/the-sims/news/simspiration-yucatan"
+                                icon="none" fill-color="none" text-color="dark" stroke-color="dark" target="_self"
+                                intent="navigation" emphasis="primary" unresolved>
+                                <a href="/games/the-sims/news/simspiration-yucatan">
+                                </a>
+                            </ea-cta>
+                        </ea-tile>
+                    </ea-container>
+                    <ea-elements-loader elements="ea-tile">
+                    </ea-elements-loader>
+                    <ea-container slot="container" filter-key="All">
+                        <ea-tile unresolved slot="tile" style="--ea-animation-index:2"
+                            media="https://media.contentapi.ea.com/content/dam/eacom/SIMS/images/2023/06/ts4-spark-something-simspiration-tiles-bamberg.jpg.adapt.crop16x9.652w.jpg"
+                            title-text="BAMBERG, GERMANY" link-target="_blank" media-type="image" link-target="_blank"
+                            tooltip="" animatable animation-threshold="0.75" animation-on-enter animation-margin="0px"
+                            animation-overrides="{&quot;--ea-animation-timing-short&quot;:&quot;1200ms&quot;,&quot;--ea-animation-delay-long&quot;:&quot;400ms&quot;,&quot;--ea-animation-enter-section-keyframe-name&quot;:&quot;slideUpFadeIn&quot;}">
+                            <h3>BAMBERG, GERMANY</h3>
+                            <ea-tile-copy slot="copy">
+                            </ea-tile-copy>
+                            <ea-elements-loader elements="ea-cta">
+                            </ea-elements-loader>
+                            <ea-cta slot="cta" type="graphic"
+                                link-url="/games/the-sims/news/simspiration-historic-half-timbered-houses-in-bavaria"
+                                icon="none" fill-color="none" text-color="dark" stroke-color="dark" target="_self"
+                                intent="navigation" emphasis="primary" unresolved>
+                                <a href="/games/the-sims/news/simspiration-historic-half-timbered-houses-in-bavaria">
+                                </a>
+                            </ea-cta>
+                        </ea-tile>
+                    </ea-container>
+                </ea-grid>
+                <ea-elements-loader elements="ea-spacer">
+                </ea-elements-loader>
+                <ea-spacer unresolved smallest="64px" small="64px" medium="128px" large="128px" largest="128px">
+                </ea-spacer>
+            </ea-section-column>
+        </ea-section>
+        <ea-elements-loader elements="ea-section">
+        </ea-elements-loader>
+        <ea-section unresolved slot="section" type="railed" layout="100" background-color="none"
+            background-overflow="hidden" spacing-top="none" spacing-bottom="none">
+            <ea-section-column slot="section-column" text-align="center" mobile-order="0">
+                <ea-elements-loader elements="ea-spacer">
+                </ea-elements-loader>
+                <ea-spacer unresolved smallest="50px" small="50px" medium="50px" large="60px" largest="60px">
+                </ea-spacer>
+                <ea-elements-loader elements="ea-subheading">
+                </ea-elements-loader>
+                <ea-subheading unresolved type="ordered" layout="small" text-align="center" text-color="light"
+                    title-text="Play The Sims 4 for Free!" spacing-top="none" spacing-bottom="none">
+                    <h3>Play The Sims 4 for Free!</h3>
+                </ea-subheading>
+                <ea-elements-loader elements="ea-spacer">
+                </ea-elements-loader>
+                <ea-spacer unresolved smallest="24px" small="24px" medium="0" large="0" largest="0">
+                </ea-spacer>
+                <ea-elements-loader elements="ea-cta">
+                </ea-elements-loader>
+                <ea-cta slot="cta" type="standard" link-url="https://www.ea.com/games/the-sims/the-sims-4/download"
+                    link-text="Play for free" icon="none" fill-color="none" text-color="light" stroke-color="light"
+                    target="_self" intent="navigation" emphasis="primary" unresolved>
+                    <a href="https://www.ea.com/games/the-sims/the-sims-4/download">
+                        Play for free
+                    </a>
+                </ea-cta>
+                <ea-elements-loader elements="ea-spacer">
+                </ea-elements-loader>
+                <ea-spacer unresolved smallest="50px" small="50px" medium="50px" large="60px" largest="60px">
+                </ea-spacer>
+            </ea-section-column>
+        </ea-section>
+        <ea-elements-loader elements="ea-spacer">
+        </ea-elements-loader>
+        <ea-spacer unresolved smallest="48px" small="48px" medium="96px" large="96px" largest="96px">
+        </ea-spacer>
+        <div style="display: none;"></div>
+    </main>
+    <footer role="contentinfo">
+        <ea-elements-loader
+            elements="ea-local-footer, ea-local-links, ea-local-link, ea-social-links, ea-social-link, ea-hybrid-regional-rating">
+        </ea-elements-loader>
+        <ea-local-footer theme="dark" sal-game-slug="the-sims" rating-lang="en" unresolved>
+            <ea-local-links slot="local-links" title-text="Explore The Sims" text-color="dark" unresolved>
+                <ea-local-link slot="local-link" link-url="/games/the-sims/the-sims-4" link-title="The Sims 4"
+                    link-text="The Sims 4" text-color="dark" unresolved>
+                    <a href="/games/the-sims/the-sims-4" title="The Sims 4">The Sims 4</a>
+                </ea-local-link>
+                <ea-local-link slot="local-link" link-url="/games/the-sims/the-sims-mobile" link-title="The Sims Mobile"
+                    link-text="The Sims Mobile" text-color="dark" unresolved>
+                    <a href="/games/the-sims/the-sims-mobile" title="The Sims Mobile">The Sims Mobile</a>
+                </ea-local-link>
+                <ea-local-link slot="local-link" link-url="/games/the-sims/the-sims-freeplay"
+                    link-title="The Sims FreePlay" link-text="The Sims FreePlay" text-color="dark" unresolved>
+                    <a href="/games/the-sims/the-sims-freeplay" title="The Sims FreePlay">The Sims FreePlay</a>
+                </ea-local-link>
+            </ea-local-links>
+            <ea-social-links slot="social-links" text-color="dark" title-text=" " unresolved>
+                <ea-social-link slot="social-link" link-url="https://www.facebook.com/TheSims/" link-title=""
+                    link-target="_blank" text-color="dark" social-network="facebook" unresolved>
+                    <a href="https://www.facebook.com/TheSims/" title="">facebook</a>
+                </ea-social-link>
+                <ea-social-link slot="social-link" link-url="https://www.youtube.com/user/TheSims" link-title=""
+                    link-target="_blank" text-color="dark" social-network="youtube" unresolved>
+                    <a href="https://www.youtube.com/user/TheSims" title="">youtube</a>
+                </ea-social-link>
+                <ea-social-link slot="social-link" link-url="https://www.instagram.com/thesims/" link-title=""
+                    link-target="_blank" text-color="dark" social-network="instagram" unresolved>
+                    <a href="https://www.instagram.com/thesims/" title="">instagram</a>
+                </ea-social-link>
+                <ea-social-link slot="social-link" link-url="https://twitter.com/TheSims" link-title=""
+                    link-target="_blank" text-color="dark" social-network="twitter" unresolved>
+                    <a href="https://twitter.com/TheSims" title="">twitter</a>
+                </ea-social-link>
+            </ea-social-links>
+            <ea-elements-loader elements="ea-studio-link">
+            </ea-elements-loader>
+            <ea-studio-link unresolved slot="studio-link" link-url="/ea-studios/maxis" link-title="Maxis "
+                image-smallest="https://media.contentapi.ea.com/content/dam/eacom/SIMS/common/maxis-logo-footer-1.svg"
+                image-small="https://media.contentapi.ea.com/content/dam/eacom/SIMS/common/maxis-logo-footer-1.svg"
+                image-medium="https://media.contentapi.ea.com/content/dam/eacom/SIMS/common/maxis-logo-footer-1.svg"
+                image-large="https://media.contentapi.ea.com/content/dam/eacom/SIMS/common/maxis-logo-footer-1.svg"
+                image-largest="https://media.contentapi.ea.com/content/dam/eacom/SIMS/common/maxis-logo-footer-1.svg"
+                image-alt="">
+                <a href="/ea-studios/maxis" title="Maxis "></a>
+            </ea-studio-link>
+            <ea-elements-loader elements="ea-studio-link">
+            </ea-elements-loader>
+            <ea-studio-link unresolved slot="studio-link" link-url="/games/the-sims" link-title="The Sims"
+                image-smallest="https://media.contentapi.ea.com/content/dam/eacom/SIMS/PC/common/ts4-home-hero-nav-logo.svg"
+                image-small="https://media.contentapi.ea.com/content/dam/eacom/SIMS/PC/common/ts4-home-hero-nav-logo.svg"
+                image-medium="https://media.contentapi.ea.com/content/dam/eacom/SIMS/PC/common/ts4-home-hero-nav-logo.svg"
+                image-large="https://media.contentapi.ea.com/content/dam/eacom/SIMS/PC/common/ts4-home-hero-nav-logo.svg"
+                image-largest="https://media.contentapi.ea.com/content/dam/eacom/SIMS/PC/common/ts4-home-hero-nav-logo.svg"
+                image-alt="">
+                <a href="/games/the-sims" title="The Sims"></a>
+            </ea-studio-link>
+            <ea-elements-loader elements="ea-rating-link">
+            </ea-elements-loader>
+            <ea-rating-link unresolved slot="rating-link"
+                link-url="http://www.esrb.org/ratings/ratings_guide.aspx#rating_symbols"
+                link-title="ESRB Crude Humor Sexual Themes Violence Online Interactions Not Rated May contain content inappropriate for children. Visit esrb.org for rating information."
+                image-smallest="https://media.contentapi.ea.com/content/dam/eacom/SIMS/common/esrb-teen-sims.png"
+                image-small="https://media.contentapi.ea.com/content/dam/eacom/SIMS/common/esrb-teen-sims.png"
+                image-medium="https://media.contentapi.ea.com/content/dam/eacom/SIMS/common/esrb-teen-sims.png"
+                image-large="https://media.contentapi.ea.com/content/dam/eacom/SIMS/common/esrb-teen-sims.png"
+                image-largest="https://media.contentapi.ea.com/content/dam/eacom/SIMS/common/esrb-teen-sims.png"
+                image-alt="">
+                <a href="http://www.esrb.org/ratings/ratings_guide.aspx#rating_symbols"
+                    title="ESRB Crude Humor Sexual Themes Violence Online Interactions Not Rated May contain content inappropriate for children. Visit esrb.org for rating information."></a>
+            </ea-rating-link>
+            <ea-elements-loader elements="ea-hybrid-regional-rating"></ea-elements-loader>
+            <ea-hybrid-regional-rating slug="the-sims" slot="regional-rating" lang="en">
+            </ea-hybrid-regional-rating>
+        </ea-local-footer>
+        <ea-elements-loader elements="ea-network-footer, ea-network-legal, ea-link, ea-content-loader">
+        </ea-elements-loader>
+        <ea-network-footer theme="dark"
+            logo-image="https://media.contentapi.ea.com/content/dam/eacom/en-us/common/october-ea-ring.png"
+            logo-tooltip="Electronics Arts Home" logo-link-url="https://www.ea.com"
+            logo-link-text="Electronics Arts Home" logo-link-tooltip="Electronics Arts Home" unresolved>
+            <img src="https://media.contentapi.ea.com/content/dam/eacom/en-us/common/october-ea-ring.png" alt="" />
+            <ea-link slot="link" link-href="/games/library" link-title="Game Library" link-text="Game Library"
+                text-color="dark" unresolved>
+                <a href="/games/library" title="Game Library">Game Library</a>
+            </ea-link>
+            <ea-link slot="link" link-href="/subscribe" link-title="Subscribe" link-text="Subscribe" text-color="dark"
+                unresolved>
+                <a href="/subscribe" title="Subscribe">Subscribe</a>
+            </ea-link>
+            <ea-link slot="link" link-href="/ea-app" link-title="EA app" link-text="EA app" text-color="dark"
+                unresolved>
+                <a href="/ea-app" title="EA app">EA app</a>
+            </ea-link>
+            <ea-link slot="link" link-href="/about" link-title="About" link-text="About" text-color="dark" unresolved>
+                <a href="/about" title="About">About</a>
+            </ea-link>
+            <ea-link slot="link" link-href="/able" link-title="Accessibility" link-text="Accessibility"
+                text-color="dark" unresolved>
+                <a href="/able" title="Accessibility">Accessibility</a>
+            </ea-link>
+            <ea-link slot="link" link-href="https://help.ea.com/" link-title="Help" link-text="Help" text-color="dark"
+                unresolved>
+                <a href="https://help.ea.com/" title="Help">Help</a>
+            </ea-link>
+            <ea-elements-loader elements="ea-regional-pricing-selector">
+            </ea-elements-loader>
+            <ea-regional-pricing-selector slot="regional-pricing-selector" theme="dark" label-text="Regional Pricing"
+                unresolved>
+                <ea-regional-pricing-selector-option slot="regional-pricing-selector-option"
+                    value="AT">Austria</ea-regional-pricing-selector-option>
+                <ea-regional-pricing-selector-option slot="regional-pricing-selector-option"
+                    value="BE">Belgium</ea-regional-pricing-selector-option>
+                <ea-regional-pricing-selector-option slot="regional-pricing-selector-option"
+                    value="BG">Bulgaria</ea-regional-pricing-selector-option>
+                <ea-regional-pricing-selector-option slot="regional-pricing-selector-option"
+                    value="HR">Croatia</ea-regional-pricing-selector-option>
+                <ea-regional-pricing-selector-option slot="regional-pricing-selector-option"
+                    value="CY">Cyprus</ea-regional-pricing-selector-option>
+                <ea-regional-pricing-selector-option slot="regional-pricing-selector-option" value="CZ">Czech
+                    Republic</ea-regional-pricing-selector-option>
+                <ea-regional-pricing-selector-option slot="regional-pricing-selector-option"
+                    value="DK">Denmark</ea-regional-pricing-selector-option>
+                <ea-regional-pricing-selector-option slot="regional-pricing-selector-option"
+                    value="EE">Estonia</ea-regional-pricing-selector-option>
+                <ea-regional-pricing-selector-option slot="regional-pricing-selector-option"
+                    value="FI">Finland</ea-regional-pricing-selector-option>
+                <ea-regional-pricing-selector-option slot="regional-pricing-selector-option"
+                    value="FR">France</ea-regional-pricing-selector-option>
+                <ea-regional-pricing-selector-option slot="regional-pricing-selector-option"
+                    value="DE">Germany</ea-regional-pricing-selector-option>
+                <ea-regional-pricing-selector-option slot="regional-pricing-selector-option"
+                    value="GR">Greece</ea-regional-pricing-selector-option>
+                <ea-regional-pricing-selector-option slot="regional-pricing-selector-option"
+                    value="HU">Hungary</ea-regional-pricing-selector-option>
+                <ea-regional-pricing-selector-option slot="regional-pricing-selector-option"
+                    value="IS">Iceland</ea-regional-pricing-selector-option>
+                <ea-regional-pricing-selector-option slot="regional-pricing-selector-option"
+                    value="IE">Ireland</ea-regional-pricing-selector-option>
+                <ea-regional-pricing-selector-option slot="regional-pricing-selector-option"
+                    value="IT">Italy</ea-regional-pricing-selector-option>
+                <ea-regional-pricing-selector-option slot="regional-pricing-selector-option"
+                    value="LV">Latvia</ea-regional-pricing-selector-option>
+                <ea-regional-pricing-selector-option slot="regional-pricing-selector-option"
+                    value="LI">Liechtenstein</ea-regional-pricing-selector-option>
+                <ea-regional-pricing-selector-option slot="regional-pricing-selector-option"
+                    value="LT">Lithuania</ea-regional-pricing-selector-option>
+                <ea-regional-pricing-selector-option slot="regional-pricing-selector-option"
+                    value="LU">Luxembourg</ea-regional-pricing-selector-option>
+                <ea-regional-pricing-selector-option slot="regional-pricing-selector-option"
+                    value="MT">Malta</ea-regional-pricing-selector-option>
+                <ea-regional-pricing-selector-option slot="regional-pricing-selector-option"
+                    value="NL">Netherlands</ea-regional-pricing-selector-option>
+                <ea-regional-pricing-selector-option slot="regional-pricing-selector-option"
+                    value="NO">Norway</ea-regional-pricing-selector-option>
+                <ea-regional-pricing-selector-option slot="regional-pricing-selector-option"
+                    value="PL">Poland</ea-regional-pricing-selector-option>
+                <ea-regional-pricing-selector-option slot="regional-pricing-selector-option"
+                    value="PT">Portugal</ea-regional-pricing-selector-option>
+                <ea-regional-pricing-selector-option slot="regional-pricing-selector-option"
+                    value="RO">Romania</ea-regional-pricing-selector-option>
+                <ea-regional-pricing-selector-option slot="regional-pricing-selector-option"
+                    value="SK">Slovenia</ea-regional-pricing-selector-option>
+                <ea-regional-pricing-selector-option slot="regional-pricing-selector-option"
+                    value="ES">Spain</ea-regional-pricing-selector-option>
+                <ea-regional-pricing-selector-option slot="regional-pricing-selector-option"
+                    value="SE">Sweden</ea-regional-pricing-selector-option>
+                <ea-regional-pricing-selector-option slot="regional-pricing-selector-option"
+                    value="CH">Switzerland</ea-regional-pricing-selector-option>
+            </ea-regional-pricing-selector>
+            <ea-elements-loader elements="ea-locale-selector">
+            </ea-elements-loader>
+            <ea-locale-selector slot="locale-selector" theme="dark" value="en-us" label-text="Language" unresolved>
+                <ea-locale-selector-option slot="locale-selector-option" value="en-us">United
+                    States</ea-locale-selector-option>
+                <ea-locale-selector-option slot="locale-selector-option" value="en-gb">United
+                    Kingdom</ea-locale-selector-option>
+                <ea-locale-selector-option slot="locale-selector-option"
+                    value="en-au">Australia</ea-locale-selector-option>
+                <ea-locale-selector-option slot="locale-selector-option"
+                    value="fr-fr">France</ea-locale-selector-option>
+                <ea-locale-selector-option slot="locale-selector-option"
+                    value="de-de">Deutschland</ea-locale-selector-option>
+                <ea-locale-selector-option slot="locale-selector-option"
+                    value="it-it">Italia</ea-locale-selector-option>
+                <ea-locale-selector-option slot="locale-selector-option" value="ja-jp">日本</ea-locale-selector-option>
+                <ea-locale-selector-option slot="locale-selector-option"
+                    value="pl-pl">Polska</ea-locale-selector-option>
+                <ea-locale-selector-option slot="locale-selector-option"
+                    value="pt-br">Brasil</ea-locale-selector-option>
+                <ea-locale-selector-option slot="locale-selector-option"
+                    value="ru-ru">Россия</ea-locale-selector-option>
+                <ea-locale-selector-option slot="locale-selector-option"
+                    value="es-es">España</ea-locale-selector-option>
+                <ea-locale-selector-option slot="locale-selector-option"
+                    value="es-mx">México</ea-locale-selector-option>
+                <ea-locale-selector-option slot="locale-selector-option" value="zh-cn">简体中文</ea-locale-selector-option>
+                <ea-locale-selector-option slot="locale-selector-option" value="ko-kr">대한민국</ea-locale-selector-option>
+                <ea-locale-selector-option slot="locale-selector-option" value="zh-tw">繁體中文</ea-locale-selector-option>
+            </ea-locale-selector>
+            <ea-network-legal slot="network-legal" copyright-text="© 2023 Electronic Arts Inc. " text-color="dark"
+                unresolved>
+                <ea-link slot="link" link-href="http://www.ea.com/legal" link-title="Legal &amp; Privacy"
+                    link-text="Legal &amp; Privacy" text-color="dark" unresolved>
+                    <a href="http://www.ea.com/legal" title="Legal &amp; Privacy">Legal &amp; Privacy</a>
+                </ea-link>
+                <ea-link slot="link" link-href="https://www.ea.com/terms-of-service" link-title="NEW User Agreement"
+                    link-text="User Agreement" text-color="dark" unresolved>
+                    <a href="https://www.ea.com/terms-of-service" title="NEW User Agreement">User Agreement</a>
+                </ea-link>
+                <ea-link slot="link" link-href="https://www.ea.com/legal/privacy-and-cookie-policy"
+                    link-title="Privacy &amp; Cookie Policy (Your Privacy Rights)"
+                    link-text="Privacy &amp; Cookie Policy (Your Privacy Rights)" text-color="dark" unresolved>
+                    <a href="https://www.ea.com/legal/privacy-and-cookie-policy"
+                        title="Privacy &amp; Cookie Policy (Your Privacy Rights)">Privacy &amp; Cookie Policy (Your
+                        Privacy Rights)</a>
+                </ea-link>
+                <ea-link slot="link" link-href="/service-updates" link-title="Online Service Updates"
+                    link-text="Online Service Updates" text-color="dark" unresolved>
+                    <a href="/service-updates" title="Online Service Updates">Online Service Updates</a>
+                </ea-link>
+                <ea-link slot="link" link-href="/security" link-title="Security" link-text="Security" text-color="dark"
+                    unresolved>
+                    <a href="/security" title="Security">Security</a>
+                </ea-link>
+                <ea-link slot="link" link-href="https://www.youtube.com/t/terms" link-title="YouTube Terms of Service"
+                    link-text="YouTube Terms of Service" text-color="dark" unresolved>
+                    <a href="https://www.youtube.com/t/terms" title="YouTube Terms of Service">YouTube Terms of
+                        Service</a>
+                </ea-link>
+                <ea-link slot="link" link-href="https://policies.google.com/privacy" link-title="Google Privacy Policy"
+                    link-text="Google Privacy Policy" text-color="dark" unresolved>
+                    <a href="https://policies.google.com/privacy" title="Google Privacy Policy">Google Privacy
+                        Policy</a>
+                </ea-link>
+                <ea-content-loader slot="link" content-url="https://www.ea.com/ccpa/footer-link">
+                </ea-content-loader>
+            </ea-network-legal>
+            <ea-elements-loader elements="ea-truste">
+            </ea-elements-loader>
+            <script async>
+                function createElement(id, hidden) {
+                    const element = document.createElement("div");
+
+                    element.id = id;
+                    element.hidden = hidden;
+
+                    return element;
+                }
+
+                function createScriptTag() {
+                    const script = document.createElement("script");
+                    let src = `//consent.trustarc.com/notice?` +
+                        `domain=ea.com&c=teconsent&js=nj&noticeType=bb&text=true&gtm=1&pn=1`;
+
+                    if (shouldAutoShowCookiePreferences()) {
+                        src = src + "&behavior=expressed";
+                    }
+
+                    script.src = src;
+                    script.setAttribute("crossorigin", "");
+
+                    return script;
+                }
+
+                function shouldAutoShowCookiePreferences() {
+                    const showCookiePreferencesParam = "show=cookiePreferences";
+                    const urlSearchParams = window.location.search.slice(1).split("&");
+
+                    return urlSearchParams.includes(showCookiePreferencesParam);
+                }
+
+                function isLocalNDS(componentUrlPrefix) {
+                    return componentUrlPrefix && componentUrlPrefix.includes('local');
+                }
+
+                function isNDSBranch(componentUrlPrefix) {
+                    return componentUrlPrefix && componentUrlPrefix.includes('branch');
+                }
+
+                function isNDSVersionGreaterOrEqual(componentUrlPrefix) {
+                    let ndsVersion = componentUrlPrefix && componentUrlPrefix.match('/release\/([^\/]*)/')[1];
+                    let isGreaterOrEqual = ndsVersion && ndsVersion.localeCompare("4.40.5", undefined, { numeric: true, sensitivity: 'base' });
+
+                    return isGreaterOrEqual >= 0;
+                }
+
+                const componentUrlPrefix = window.nds.componentUrlPrefix;
+
+                /*
+                * Periksa kompatibilitas mundur dengan versi NDS yang lebih besar atau sama dengan saat TrustArc diintegrasikan
+                 */
+                if (
+                    isLocalNDS(componentUrlPrefix) ||
+                    isNDSBranch(componentUrlPrefix) ||
+                    isNDSVersionGreaterOrEqual(componentUrlPrefix)
+                ) {
+                    const trustArcScript = createScriptTag();
+                    const elements = document.createDocumentFragment();
+
+                    elements.appendChild(createElement("consent_blackbar", false));
+                    elements.appendChild(createElement("teconsent", true));
+                    elements.appendChild(trustArcScript);
+
+                    document.body.appendChild(elements);
+                }
+
+            </script>
+            <ea-truste unresolved slot="truste" domain="ea.com">
+                <div>
+
+                    <a href="//privacy.truste.com/privacy-seal/validation?rid=f1a11c5d-0232-4077-8498-2e69a38c1335"
+                        target="_blank">
+                        <img style="border: none"
+                            src="//privacy-policy.truste.com/privacy-seal/seal?rid=f1a11c5d-0232-4077-8498-2e69a38c1335"
+                            alt="TRUSTe" />
+                    </a>
+
+                </div>
+            </ea-truste>
+
+        </ea-network-footer>
+    </footer>
+    <ea-player player-endpoint="/user-data"></ea-player>
+    <ea-elements-loader elements="ea-modal">
+    </ea-elements-loader>
+    <ea-modal modal unresolved id="eacomagegate" theme="dark">
+        <ea-elements-loader elements="ea-age-gate">
+        </ea-elements-loader>
+        <ea-age-gate unresolved slot="age-gate" id="eacomagegate" age="18"
+            error="You are not eligible to view this content." message="Please provide your birth date. ">
+            <ea-elements-loader elements="ea-date-field">
+            </ea-elements-loader>
+            <ea-date-field slot="date-field" type="date" text-color="light" month-placeholder="MM" day-placeholder="DD"
+                year-placeholder="YYYY" label-text="Enter your birthdate" unresolved>
+            </ea-date-field>
+            <ea-elements-loader elements="ea-submit">
+            </ea-elements-loader>
+            <ea-submit unresolved slot="submit" value-text="Submit" text-color="light"></ea-submit>
+        </ea-age-gate>
+    </ea-modal>
+    <script src="//pl.ea.com/release/4.60.2/elements/browser-support.min.js"></script>
+    <script>
+        eaBrowserSupport.requiredFeatures = 'picture';
+        eaBrowserSupport.requiredHeading = 'Sorry, this browser is not supported';
+        eaBrowserSupport.requiredText = 'Please download a supported browser to view this webpage.';
+        eaBrowserSupport.recommendedFeatures = 'cssgrid';
+        eaBrowserSupport.recommendedText = 'This browser is not recommended and the webpage may not display properly.';
+        eaBrowserSupport.ctas = [{ "text": "Download Chrome", "url": "https://www.google.com/chrome/" }, { "text": "Download Firefox", "url": "https://www.mozilla.org/firefox/new/" }, { "text": "Download Edge", "url": "https://www.microsoft.com/edge/" }];
+        eaBrowserSupport.dismissText = 'Dismiss';
+        eaBrowserSupport.svgLogo = '';
+        eaBrowserSupport.init();
+    </script>
+    <ea-type-kit kit-url="//use.typekit.net/txn1klh.js"></ea-type-kit>
+    <noscript><img
+            src="https://www.ea.com/akam/13/pixel_fc3067d?a=dD1iZWIwYzdjOTcwYzYwNzU4ODk0Yjc1MzJmZDJkMjhjNjEwNjE0MTFkJmpzPW9mZg=="
+            style="visibility: hidden; position: absolute; left: -999px; top: -999px;" /></noscript>
+</body>
+
+</html>
